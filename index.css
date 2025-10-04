@@ -1,0 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* PhishShield AI Design System - All colors, gradients, fonts, etc defined here. 
+All colors MUST be HSL for consistency and theming.
+*/
+
+@layer base {
+  :root {
+    /* Base colors - White background theme */
+    --background: 0 0% 100%;
+    --foreground: 220 26% 14%;
+
+    /* Card and surface colors */
+    --card: 0 0% 100%;
+    --card-foreground: 220 26% 14%;
+
+    /* Popover colors */
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 26% 14%;
+
+    /* Primary brand colors - Blue gradient like logo */
+    --primary: 245 58% 51%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 245 58% 71%;
+    --primary-dark: 245 58% 31%;
+
+    /* Secondary colors - Light blue accent */
+    --secondary: 200 95% 94%;
+    --secondary-foreground: 220 26% 14%;
+
+    /* Muted colors for subtle elements */
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+
+    /* Accent colors - Cyan from logo gradient */
+    --accent: 191 91% 85%;
+    --accent-foreground: 220 26% 14%;
+
+    /* Status colors */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    /* Risk score colors for phishing detection */
+    --risk-safe: 142 71% 45%;      /* Green for safe */
+    --risk-suspicious: 38 92% 50%; /* Amber for suspicious */
+    --risk-dangerous: 0 84% 60%;   /* Red for dangerous */
+    --risk-unknown: 267 65% 59%;   /* Purple for unknown */
+
+    /* Border and input colors */
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 245 58% 51%;
+
+    /* Design system radius */
+    --radius: 0.75rem;
+
+    /* Custom gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(267 65% 59%), hsl(191 91% 55%));
+    --gradient-hero: linear-gradient(135deg, hsl(245 58% 51%) 0%, hsl(191 91% 55%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(220 14% 99%) 100%);
+
+    /* Shadows */
+    --shadow-soft: 0 2px 8px hsl(220 26% 14% / 0.08);
+    --shadow-medium: 0 4px 16px hsl(220 26% 14% / 0.12);
+    --shadow-strong: 0 8px 32px hsl(220 26% 14% / 0.16);
+
+    /* Animation timing */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-quick: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Dark mode - keeping minimal for now, focus on light theme */
+    --background: 220 26% 7%;
+    --foreground: 0 0% 95%;
+    --card: 220 26% 9%;
+    --card-foreground: 0 0% 95%;
+    --border: 220 13% 20%;
+    --input: 220 13% 20%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-muted;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/20 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/30;
+  }
+}
+
+@layer components {
+  /* Hero button variant */
+  .btn-hero {
+    @apply bg-gradient-to-r from-primary to-accent text-white font-semibold px-8 py-4 rounded-xl hover:shadow-strong transition-all duration-300 hover:scale-105;
+  }
+
+  /* Risk score badges */
+  .badge-safe {
+    @apply bg-green-100 text-green-800 border-green-200;
+  }
+  
+  .badge-suspicious {
+    @apply bg-yellow-100 text-yellow-800 border-yellow-200;
+  }
+  
+  .badge-dangerous {
+    @apply bg-red-100 text-red-800 border-red-200;
+  }
+  
+  .badge-unknown {
+    @apply bg-purple-100 text-purple-800 border-purple-200;
+  }
+
+  /* Card hover effects */
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-medium hover:-translate-y-1;
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    @apply bg-white/80 backdrop-blur-md border border-white/20;
+  }
+}

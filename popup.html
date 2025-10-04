@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>PhishShield AI</title>
+		<style>
+			/* Basic reset */
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+				font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+			}
+
+			body {
+				width: 300px;
+				min-height: 400px;
+				background: #fdfcff; /* White background */
+				color: #1a1a1a;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				padding: 15px;
+			}
+
+			/* Logo */
+			.logo {
+				width: 60px;
+				height: 60px;
+				margin-bottom: 15px;
+				background: url("logo.png") no-repeat center center;
+				background-size: contain;
+			}
+
+			h2 {
+				font-size: 20px;
+				color: #4a3fff; /* Light purple */
+				margin-bottom: 15px;
+			}
+
+			.status-card {
+				width: 100%;
+				padding: 15px;
+				border-radius: 10px;
+				border: 1px solid #d0d0ff;
+				background: #eef0ff; /* Light purple/blue card */
+				margin-bottom: 10px;
+			}
+
+			.status-card.safe {
+				border-color: #4caf50;
+				background: #e6f9e6;
+			}
+
+			.status-card.danger {
+				border-color: #f44336;
+				background: #ffe6e6;
+			}
+
+			.status-card h3 {
+				font-size: 16px;
+				margin-bottom: 5px;
+			}
+
+			.status-card p {
+				font-size: 14px;
+				color: #333;
+			}
+
+			.url {
+				word-break: break-all;
+				font-size: 13px;
+				color: #555;
+				margin-top: 5px;
+			}
+
+			button {
+				background: #4a3fff; /* Light purple */
+				color: white;
+				border: none;
+				padding: 10px 15px;
+				border-radius: 8px;
+				cursor: pointer;
+				margin-top: 10px;
+				width: 100%;
+				font-size: 14px;
+			}
+
+			button:hover {
+				background: #3b33cc;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="logo"></div>
+		<h2>PhishShield AI</h2>
+		<div id="statusContainer">
+			<div class="status-card safe">
+				<h3>Status:</h3>
+				<p>Reason:</p>
+				<p class="url"></p>
+			</div>
+		</div>
+		<button id="openOriginalBtn">Open Original URL</button>
+		<script src="./popup.js"></script>
+	</body>
+</html>
