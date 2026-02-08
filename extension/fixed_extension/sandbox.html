@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>TrustNet Sandbox</title>
+  <link rel="stylesheet" href="sandbox.css">
+</head>
+
+<body>
+
+  <div class="top">
+    <input id="urlInput" placeholder="Enter URL">
+    <button id="goBtn">Go</button>
+    <button id="openOriginal">Open original</button>
+    <span id="note"></span>
+  </div>
+
+  <iframe
+    id="sandframe"
+    src="about:blank"
+    allow="scripts forms same-origin"
+    style="width:100%; height:95vh; border:none;">
+  </iframe>
+
+  <script src="sandbox.js"></script>
+</body>
+</html>

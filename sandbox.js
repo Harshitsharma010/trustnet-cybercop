@@ -1,4 +1,5 @@
-const LOCAL_URL = 'http://192.168.1.140:5000/predict';
+const LOCAL_URL = "http://localhost:5000/predict";
+
 
 
 (function() {

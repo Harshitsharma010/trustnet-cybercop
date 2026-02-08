@@ -1,8 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-print("🔥 Running Rule-Based Phishing API (NO ML MODEL REQUIRED) 🔥")
-
 app = Flask(__name__)
 CORS(app)
 
@@ -10,32 +8,21 @@ CORS(app)
 def predict():
     data = request.get_json()
 
-    if not data or "url" not in data:
-        return jsonify({"error": "URL missing"}), 400
+    url = data.get("url", "").lower()
 
-    url = data["url"].lower()
-
-    keywords = [
-        "login", "verify", "secure", "update",
-        "bank", "paypal", "account", "signin",
-        "confirm", "password", "credential"
-    ]
+    keywords = ["login", "verify", "secure", "update", "bank", "paypal", "account"]
 
     score = 0
     triggered = []
 
-    for word in keywords:
-        if word in url:
+    for k in keywords:
+        if k in url:
             score += 15
-            triggered.append(word)
+            triggered.append(k)
 
     if url.endswith(".xyz"):
         score += 25
         triggered.append("suspicious_tld_xyz")
-
-    if url.endswith(".top"):
-        score += 20
-        triggered.append("suspicious_tld_top")
 
     if score >= 70:
         status = "Dangerous"
@@ -50,7 +37,6 @@ def predict():
         "phishing_chance": min(score, 100),
         "signals_triggered": triggered
     })
-
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5000, debug=True)
