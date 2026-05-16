@@ -1,0 +1,14 @@
+version: 1.0
+runtime: python311
+build:
+  commands:
+    build:
+      - echo "TrustNet CyberCop backend build"
+run:
+  runtime-version: 3.11
+  pre-run:
+    - pip3 install -r backend/requirements.txt
+  command: gunicorn --chdir backend -w 2 -b 0.0.0.0:5000 api:app
+  network:
+    port: 5000
+    env: PORT

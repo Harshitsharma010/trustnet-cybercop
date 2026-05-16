@@ -1,0 +1,7 @@
+
+body { margin:0; font-family: Arial, Helvetica, sans-serif; height:100vh; display:flex; flex-direction:column; }
+#topbar { padding:8px; display:flex; gap:8px; align-items:center; background:#f3f4f6; border-bottom:1px solid #ddd; }
+#urlInput { flex:1; padding:8px; border:1px solid #bbb; border-radius:4px; }
+#frameWrap { flex:1; display:block; }
+#sandframe { width:100%; height:100%; border:0; }
+#note { margin-left:8px; color:#333; font-size:13px; }

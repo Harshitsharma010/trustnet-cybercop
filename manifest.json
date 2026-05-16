@@ -1,0 +1,53 @@
+{
+  "manifest_version": 3,
+  "name": "PhishShield AI",
+  "version": "1.0",
+  "description": "Opens links in a secure sandbox environment to protect against phishing attacks & secure browsing.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "webNavigation",
+    "history",
+    "tabs",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_title": "PhishShield AI - Link Sandbox Opener",
+    "default_popup": "popup.html"
+  },
+  "omnibox": {
+    "keyword": "sandbox"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "128": "logo128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "sandbox.html",
+        "sandbox.js",
+        "sandbox.css"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}
