@@ -1,96 +1,287 @@
-🛡️ TrustNet CyberCop
-Autonomous, AI-Powered, Multi-Platform Cybersecurity Solution Detect, Protect, Cloak, and Neutralize Threats—Anywhere, Anytime.
+TrustNet CyberCop
 
-🚨 Problem Statement
-Modern users face a rising tide of AI-driven cyberattacks—phishing, scams, deepfakes, and dark web data leaks. Existing security tools are reactive, fragmented, and often ignore user awareness. TrustNet CyberCop solves this by offering a unified, adaptive, and privacy-first cybersecurity platform.
+A cloud-ready ML-powered phishing detection platform that analyzes suspicious URLs using a trained RandomForest model and serves real-time predictions through a production-style Flask API.
 
-💡 Solution Overview
-TrustNet CyberCop is a real-time, multi-platform cybersecurity system that combines:
+Overview
 
-AI-Powered Threat Detection across Email, SMS, WhatsApp, LinkedIn, and Social Media
+TrustNet CyberCop is a cybersecurity-focused machine learning platform designed to detect potentially malicious and phishing URLs in real time.
 
-Phishield Module for phishing site and scam link detection
+The project combines:
 
-Real-Time Threat Map for live visualization
+Machine Learning inference
 
-AI Chatbot for multilingual user education
+Flask backend APIs
 
-PKI & Certificate Cloaking for secure identity management
+React frontend dashboard
 
-Gamified Dashboard to boost user awareness and feedback
+Docker containerization
 
-🔐 Core Features
-Feature	Description
-Phishield	Detects fake websites, scam emails, and malicious links
-Adaptive AI Engine	Learns from threats and chooses optimal defense
-Multiplatform Dashboard	Unified interface across web, mobile, and extension
-Sandbox Environment	Safe space to simulate and analyze threats
-Certificate Cloaking	Blockchain-backed PKI with metadata protection
-Behavioral Biometrics	Risk scoring based on user behavior
-Federated AI	Decentralized learning for privacy-preserving detection
-🧠 Tech Stack
-Frontend:
+Production Gunicorn server
 
-React.js (Web Dashboard)
+Cloud-ready deployment architecture
 
-Native Android (Java + XML)
+AWS ECS compatibility
 
-Chrome Extension (Manifest V3)
+The system extracts URL-based security features, evaluates them using a trained RandomForestClassifier model, and returns phishing-risk predictions through a REST API.
 
-Backend:
+Features
 
-Node.js + Express
+Real-time phishing URL detection
 
-Python (Flask / FastAPI)
+Machine learning-powered prediction engine
 
-MongoDB (User data, threat logs)
+Flask REST API backend
 
-AI/ML:
+React + Vite frontend dashboard
 
-Scikit-learn (RandomForestClassifier)
+Dockerized backend service
 
-Pandas (Data preprocessing)
+Gunicorn production server
 
-Future: TensorFlow / PyTorch for deep learning
+Health monitoring endpoint
 
-Tools:
+Fast inference response times
 
-GitHub (Version Control)
+Cloud deployment ready
 
-Postman (API Testing)
+AWS ECS/Fargate compatible architecture
 
-Railway / Render (Hosting)
+Tech Stack
 
-📊 Impact & Benefits
-Real-Time Protection from phishing, scams, and fraud
+Backend
 
-Privacy-First Design with encrypted and cloaked data
+Python
 
-Scalable Architecture for individuals, SMEs, and enterprises
+Flask
 
-User Education via AI chatbot and gamified dashboard
+Gunicorn
 
-Measurable Outcomes through threat tracking and feedback
+scikit-learn
 
-🚀 Demo Readiness
-A fully functional MVP includes:
+NumPy
 
-PKI Certificate Cloaking
+joblib
 
-Phishield Detection
+Frontend
 
-Sandbox Simulation
+React
 
-AI Chatbot for Education
+Vite
 
-📈 Future Plans
-Fraud & Payment Protection Module
+JavaScript
 
-Predictive Fraud Simulation
+ML & Data
 
-Dark Web Threat Cloaking
+RandomForestClassifier
 
-Advanced Deep Learning for spoof detection
+Feature extraction pipeline
 
-📜 License
-This project is open-source under the MIT License. See LICENSE for details.
+URL-based phishing dataset
+
+DevOps & Cloud
+
+Docker
+
+AWS ECS (deployment-ready)
+
+AWS ECR
+
+CloudWatch-ready logging architecture
+
+System Architecture
+
+React Frontend
+       ↓
+Flask API Backend
+       ↓
+Feature Extraction Pipeline
+       ↓
+RandomForest ML Model
+       ↓
+Prediction Response
+
+Future Cloud Deployment Architecture:
+
+React Frontend
+       ↓
+AWS Load Balancer / API Gateway
+       ↓
+ECS Fargate Flask API
+       ↓
+ML Inference Engine
+       ↓
+CloudWatch Monitoring & Logs
+
+API Endpoints
+
+Health Check
+
+GET /health
+
+Example Response
+
+{
+  "model_loaded": true,
+  "status": "healthy"
+}
+
+Predict URL
+
+POST /predict
+
+Request Body
+
+{
+  "url": "https://example.com"
+}
+
+Example Response
+
+{
+  "phishing_chance": 0.0,
+  "prediction": 0,
+  "response_time_ms": 158.8,
+  "status": "Safe",
+  "url": "https://example.com"
+}
+
+Local Development Setup
+
+Clone Repository
+
+git clone https://github.com/Harshitsharma010/trustnet-cybercop.git
+cd trustnet-cybercop
+
+Backend Setup
+
+cd backend
+python -m pip install -r requirements.txt
+python api.py
+
+Backend runs on:
+
+http://127.0.0.1:5000
+
+Frontend Setup
+
+cd dashboard
+npm install
+npm run dev
+
+Frontend runs on:
+
+http://localhost:8080
+
+Docker Setup
+
+Build Docker Image
+
+cd backend
+docker build -t trustnet-api .
+
+Run Docker Container
+
+docker run -p 5000:5000 trustnet-api
+
+Production Features
+
+Gunicorn Production Server
+
+The backend uses Gunicorn for production-grade API serving.
+
+Health Monitoring
+
+A dedicated /health endpoint allows:
+
+Container health checks
+
+ECS health monitoring
+
+Load balancer verification
+
+Service availability checks
+
+Dockerized Backend
+
+The backend is fully containerized and tested locally using Docker.
+
+Cloud Deployment Roadmap
+
+Planned deployment stack:
+
+AWS ECR for container registry
+
+AWS ECS Fargate for container orchestration
+
+CloudWatch logs and monitoring
+
+GitHub Actions CI/CD pipeline
+
+Infrastructure automation
+
+Security Focus
+
+This project focuses on:
+
+URL threat analysis
+
+Phishing detection
+
+Security-oriented feature engineering
+
+API-based cyber threat assessment
+
+Project Highlights
+
+Built a cloud-ready ML inference platform
+
+Dockerized a production-style Flask backend
+
+Integrated ML prediction APIs with a React dashboard
+
+Added health monitoring endpoints for deployment readiness
+
+Implemented real-time phishing URL analysis
+
+Designed deployment architecture compatible with AWS ECS
+
+Future Improvements
+
+CI/CD pipeline with GitHub Actions
+
+AWS ECS Fargate deployment
+
+CloudWatch observability integration
+
+Authentication & API rate limiting
+
+Threat history database
+
+Advanced phishing confidence scoring
+
+Terraform infrastructure provisioning
+
+Screenshots
+
+Add screenshots here:
+
+Frontend dashboard
+
+Prediction results
+
+Docker container logs
+
+AWS deployment architecture
+
+CloudWatch dashboards
+
+Author
+
+Harshit Sharma
+
+GitHub: https://github.com/Harshitsharma010
+
+License
+
+This project is intended for educational, research, and cybersecurity learning purposes.
+
