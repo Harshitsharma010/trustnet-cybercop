@@ -85,6 +85,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			openInSandbox(request.url);
 			sendResponse({ success: true });
 			return false; // Synchronous response
+		} else if (request.action === "openSandbox") {
+			openInSandbox(request.url);
+			sendResponse({ success: true });
+			return false;
 		} else if (request.action === "openOriginal") {
 			console.log("Processing openOriginal request for:", request.url);
 

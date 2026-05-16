@@ -32,6 +32,18 @@ def load_model():
 
 load_model()
 
+@app.route("/", methods=["GET"])
+def index():
+    return jsonify({
+        "service": "TrustNet CyberCop phishing detection API",
+        "status": "running",
+        "model_loaded": model is not None,
+        "endpoints": {
+            "health": "/health",
+            "predict": "/predict"
+        }
+    }), 200
+
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({

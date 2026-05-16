@@ -1,4 +1,4 @@
-// content.js - Smart Link Interception (Only Scans Suspicious Links)
+// content.js - Open untrusted links in the TrustNet sandbox
 
 console.log("✅ TrustNet CyberCop content script loaded");
 
@@ -68,8 +68,15 @@ function looksLikeFraud(url) {
   return SUSPICIOUS_PATTERNS.some(pattern => pattern.test(url));
 }
 
+function openSandbox(url) {
+  chrome.runtime.sendMessage({
+    action: 'openSandbox',
+    url: url
+  });
+}
+
 // Intercept link clicks
-document.addEventListener('click', async (event) => {
+document.addEventListener('click', (event) => {
   const link = event.target.closest('a');
   
   if (!link || !link.href) return;
@@ -86,21 +93,18 @@ document.addEventListener('click', async (event) => {
     console.log("✅ Trusted domain, allowing:", url);
     return;
   }
+
+  event.preventDefault();
+  event.stopPropagation();
   
-  // Check for obvious fraud patterns
+  openSandbox(url);
+
+  // Check for obvious fraud patterns in the background so the sandbox/popup can
+  // still show risk information without blocking sandbox opening.
   if (looksLikeFraud(url)) {
-    event.preventDefault();
-    event.stopPropagation();
-    
     console.log("⚠️ Suspicious pattern detected:", url);
-    
-    // Scan with API
-    await scanAndHandle(url);
-    return;
   }
-  
-  // For all other external links, do a quick background scan
-  // (Don't block the click, just scan in background)
+
   scanInBackground(url);
   
 }, true); // Use capture phase
@@ -227,19 +231,24 @@ function highlightSuspiciousLinks() {
   });
 }
 
-// Run highlighting after page load
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', highlightSuspiciousLinks);
-} else {
+function startLinkObserver() {
   highlightSuspiciousLinks();
+
+  const observer = new MutationObserver(() => {
+    highlightSuspiciousLinks();
+  });
+
+  if (document.body) {
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  }
 }
 
-// Watch for dynamically added links
-const observer = new MutationObserver(() => {
-  highlightSuspiciousLinks();
-});
-
-observer.observe(document.body, {
-  childList: true,
-  subtree: true
-});
+// Run highlighting after page load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startLinkObserver);
+} else {
+  startLinkObserver();
+}

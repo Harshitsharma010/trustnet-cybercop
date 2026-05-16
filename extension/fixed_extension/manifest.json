@@ -4,13 +4,20 @@
   "version": "1.0",
 
   "permissions": [
-    "tabs"
+    "tabs",
+    "storage",
+    "webNavigation"
   ],
 
   "host_permissions": [
     "<all_urls>",
     "http://127.0.0.1:5000/*"
   ],
+
+  "action": {
+    "default_title": "TrustNet CyberCop",
+    "default_popup": "popup.html"
+  },
 
   "background": {
     "service_worker": "background.js"
@@ -21,6 +28,19 @@
       "matches": ["http://*/*", "https://*/*"],
       "js": ["content.js"],
       "run_at": "document_start"
+    }
+  ],
+
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "sandbox.html",
+        "sandbox.js",
+        "sandbox.css"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ]
 }

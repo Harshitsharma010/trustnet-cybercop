@@ -1,13 +1,18 @@
 (function() {
-  const extensionSandboxBase = chrome.runtime.getURL("sandbox.html");
-
   function openInSandbox(url) {
-    try {
-      const target = extensionSandboxBase + "?url=" + encodeURIComponent(url);
-      window.open(target, "_blank");
-    } catch (e) {
-      console.error("Failed to open sandbox:", e);
-    }
+    chrome.runtime.sendMessage(
+      { action: "openInSandbox", url },
+      (response) => {
+        if (chrome.runtime.lastError) {
+          console.error("Failed to request sandbox:", chrome.runtime.lastError.message);
+          return;
+        }
+
+        if (!response?.success) {
+          console.error("Sandbox open failed:", response?.error || "Unknown error");
+        }
+      },
+    );
   }
 
   document.addEventListener("click", function(e) {
