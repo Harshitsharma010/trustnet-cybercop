@@ -1,4 +1,47 @@
 (function() {
+  const TRUSTED_DOMAINS = [
+    "google.com",
+    "youtube.com",
+    "github.com",
+    "stackoverflow.com",
+    "wikipedia.org",
+    "microsoft.com",
+    "apple.com",
+    "amazon.com",
+    "linkedin.com",
+    "reddit.com"
+  ];
+
+  const SUSPICIOUS_PATTERNS = [
+    /paypal.*verify/i,
+    /amazon.*account.*suspend/i,
+    /apple.*id.*verify/i,
+    /banking.*secure/i,
+    /confirm.*account/i,
+    /suspended.*account/i,
+    /unusual.*activity/i,
+    /verify.*identity/i,
+    /update.*payment/i,
+    /claim.*prize/i,
+    /won.*lottery/i,
+    /free.*iphone/i,
+    /click.*here.*now/i,
+    /urgent.*action/i
+  ];
+
+  function isTrustedDomain(url) {
+    try {
+      const hostname = new URL(url).hostname.toLowerCase().replace(/^www\./, "");
+      return TRUSTED_DOMAINS.some((trusted) => hostname === trusted || hostname.endsWith("." + trusted));
+    } catch {
+      return false;
+    }
+  }
+
+  function shouldOpenSandbox(url) {
+    return !isTrustedDomain(url) && SUSPICIOUS_PATTERNS.some((pattern) => pattern.test(url));
+  }
+
   function openInSandbox(url) {
     chrome.runtime.sendMessage(
       { action: "openInSandbox", url },
@@ -15,71 +58,28 @@
     );
   }
 
-  document.addEventListener("click", function(e) {
-    let a = e.target;
-    while (a && a.tagName !== "A") a = a.parentElement;
-    if (!a || !a.href) return;
-    if (!/^https?:\/\//i.test(a.href)) return;
+  document.addEventListener("click", (event) => {
+    const link = event.target.closest("a");
+    if (!link?.href || !/^https?:\/\//i.test(link.href)) return;
+    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    if (!shouldOpenSandbox(link.href)) return;
 
-    if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-    openInSandbox(a.href);
+    event.preventDefault();
+    event.stopPropagation();
+    openInSandbox(link.href);
   }, true);
 
   const originalOpen = window.open;
   window.open = function(url, name, specs) {
     try {
-      if (typeof url === "string" && /^https?:\/\//i.test(url)) {
+      if (typeof url === "string" && /^https?:\/\//i.test(url) && shouldOpenSandbox(url)) {
         openInSandbox(url);
         return null;
       }
-    } catch (e) { }
+    } catch {
+      // Fall through to native window.open.
+    }
+
     return originalOpen.apply(window, arguments);
   };
-
-  function highlightBadWords(root) {
-    const regex = /\b\w*fuck\w*\b/gi;
-
-    function walk(node) {
-      if (!node) return;
-      let child = node.firstChild;
-      while (child) {
-        const next = child.nextSibling;
-        if (child.nodeType === 3) {
-          handleText(child);
-        } else if (child.nodeType === 1 && child.tagName !== "SCRIPT" && child.tagName !== "STYLE" && child.tagName !== "IFRAME") {
-          walk(child);
-        }
-        child = next;
-      }
-    }
-
-    function handleText(textNode) {
-      const text = textNode.nodeValue;
-      if (!text) return;
-      if (!regex.test(text)) return;
-      const span = document.createElement("span");
-      span.innerHTML = text.replace(regex, (match) => {
-        return `<span style="color: #e60000; font-weight:700; background: rgba(255,230,230,0.4);">${match}</span>`;
-      });
-      if (textNode.parentNode) {
-        textNode.parentNode.replaceChild(span, textNode);
-      }
-    }
-
-    try {
-      walk(root || document.body);
-    } catch (e) {
-      console.error("Highlighting error:", e);
-    }
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    highlightBadWords(document.body);
-    setTimeout(() => highlightBadWords(document.body), 1500);
-  });
-
-  highlightBadWords(document.body);
 })();

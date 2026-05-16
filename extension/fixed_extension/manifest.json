@@ -5,8 +5,7 @@
 
   "permissions": [
     "tabs",
-    "storage",
-    "webNavigation"
+    "storage"
   ],
 
   "host_permissions": [
@@ -17,6 +16,10 @@
   "action": {
     "default_title": "TrustNet CyberCop",
     "default_popup": "popup.html"
+  },
+
+  "omnibox": {
+    "keyword": "sandbox"
   },
 
   "background": {

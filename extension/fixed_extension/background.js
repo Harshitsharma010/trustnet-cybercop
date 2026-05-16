@@ -1,5 +1,4 @@
 const DEFAULT_API_BASE_URL = "http://127.0.0.1:5000";
-const bypassTabs = new Set();
 
 console.log("TrustNet CyberCop installed successfully");
 
@@ -14,23 +13,15 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
-chrome.webNavigation.onBeforeNavigate.addListener((details) => {
-  if (details.frameId !== 0 || !details.tabId) return;
+chrome.omnibox.onInputEntered.addListener((text) => {
+  const url = normalizeUrl(text);
 
-  if (bypassTabs.has(details.tabId)) {
-    bypassTabs.delete(details.tabId);
-    return;
+  try {
+    new URL(url);
+    chrome.tabs.create({ url: buildSandboxUrl(url) });
+  } catch (error) {
+    console.error("Invalid sandbox URL:", text, error);
   }
-
-  if (!shouldSandboxUrl(details.url)) return;
-
-  chrome.tabs.update(details.tabId, {
-    url: buildSandboxUrl(details.url)
-  });
-});
-
-chrome.tabs.onRemoved.addListener((tabId) => {
-  bypassTabs.delete(tabId);
 });
 
 function getApiBaseUrl(callback) {
@@ -91,9 +82,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 
   if (msg.action === "openOriginal") {
-    chrome.tabs.create({ url: msg.url }, (tab) => {
-      if (tab?.id) bypassTabs.add(tab.id);
-    });
+    chrome.tabs.create({ url: msg.url });
     return true;
   }
 });
@@ -102,17 +91,8 @@ function buildSandboxUrl(url) {
   return chrome.runtime.getURL("sandbox.html") + "?url=" + encodeURIComponent(url);
 }
 
-function shouldSandboxUrl(url) {
-  try {
-    const parsed = new URL(url);
-
-    if (!["http:", "https:"].includes(parsed.protocol)) return false;
-    if (parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1") return false;
-    if (parsed.protocol === "chrome-extension:") return false;
-    if (parsed.searchParams.has("nosandbox")) return false;
-
-    return true;
-  } catch {
-    return false;
-  }
+function normalizeUrl(value) {
+  const trimmed = String(value || "").trim();
+  return /^https?:\/\//i.test(trimmed) ? trimmed : "https://" + trimmed;
 }
+

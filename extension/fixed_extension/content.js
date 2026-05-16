@@ -94,15 +94,13 @@ document.addEventListener('click', (event) => {
     return;
   }
 
-  event.preventDefault();
-  event.stopPropagation();
-  
-  openSandbox(url);
-
-  // Check for obvious fraud patterns in the background so the sandbox/popup can
-  // still show risk information without blocking sandbox opening.
   if (looksLikeFraud(url)) {
+    event.preventDefault();
+    event.stopPropagation();
     console.log("⚠️ Suspicious pattern detected:", url);
+    openSandbox(url);
+    scanInBackground(url);
+    return;
   }
 
   scanInBackground(url);
