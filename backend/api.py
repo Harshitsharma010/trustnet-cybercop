@@ -17,9 +17,11 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-CORS(app)
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "*")
+CORS(app, resources={r"/*": {"origins": allowed_origins}})
 
 MODEL_PATH = Path(__file__).parent / "model.pkl"
+MAX_URL_LENGTH = 2048
 model = None
 
 def load_model():
@@ -54,12 +56,21 @@ def health():
 @app.route("/predict", methods=["POST"])
 def predict():
     start = time.time()
-    data = request.get_json()
+    data = request.get_json(silent=True)
 
     if not data or "url" not in data:
         return jsonify({"error": "URL missing"}), 400
 
-    url = data["url"]
+    url = str(data["url"]).strip()
+
+    if not url:
+        return jsonify({"error": "URL missing"}), 400
+
+    if len(url) > MAX_URL_LENGTH:
+        return jsonify({"error": "URL too long"}), 413
+
+    if not url.startswith(("http://", "https://")):
+        return jsonify({"error": "URL must start with http:// or https://"}), 400
 
     if model is None:
         return jsonify({"error": "Model not loaded"}), 500
@@ -98,7 +109,7 @@ def predict():
         })
 
     except Exception as e:
-        logger.error(f"Prediction error: {e}")
+        logger.exception("Prediction error")
         return jsonify({"error": "Prediction failed", "detail": str(e)}), 500
 
 if __name__ == "__main__":
