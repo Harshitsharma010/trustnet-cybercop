@@ -1,287 +1,456 @@
-TrustNet CyberCop
+# TrustNet CyberCop
 
-A cloud-ready ML-powered phishing detection platform that analyzes suspicious URLs using a trained RandomForest model and serves real-time predictions through a production-style Flask API.
+> ML-powered phishing URL detection platform with a Flask inference API, React/Vite dashboard, Chrome extension sandbox flow, Docker support, and AWS-ready deployment configuration.
 
-Overview
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![Flask](https://img.shields.io/badge/Backend-Flask-green)
+![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB)
+![Docker](https://img.shields.io/badge/Container-Docker-blue)
+![AWS](https://img.shields.io/badge/Deploy-AWS%20Ready-orange)
+![License](https://img.shields.io/badge/License-Educational-lightgrey)
 
-TrustNet CyberCop is a cybersecurity-focused machine learning platform designed to detect potentially malicious and phishing URLs in real time.
+---
 
-The project combines:
+## Overview
 
-Machine Learning inference
+**TrustNet CyberCop** is a cybersecurity-focused project that helps users analyze suspicious URLs before opening them. It combines:
 
-Flask backend APIs
+- A **machine learning phishing detection model**
+- A **Flask REST API** for real-time URL prediction
+- A **React + Vite dashboard** for checking URLs from a web interface
+- A **Chrome extension** that opens suspicious links inside a sandbox-style flow
+- **Docker + Gunicorn** for production-style backend serving
+- **AWS App Runner + Amplify-ready configuration** for cloud deployment
 
-React frontend dashboard
+The backend extracts URL-based security features, sends them to a trained `RandomForestClassifier`, and returns a safety status such as **Safe**, **Suspicious**, or **Dangerous**.
 
-Docker containerization
+---
 
-Production Gunicorn server
+## Why This Project Matters
 
-Cloud-ready deployment architecture
+Phishing attacks often rely on fake login pages, urgent messages, shortened URLs, suspicious keywords, and misleading domains. TrustNet CyberCop demonstrates how machine learning, browser security workflows, and cloud deployment practices can be combined into a practical cybersecurity tool.
 
-AWS ECS compatibility
+This project is useful for showcasing skills in:
 
-The system extracts URL-based security features, evaluates them using a trained RandomForestClassifier model, and returns phishing-risk predictions through a REST API.
+- Machine learning inference
+- Cybersecurity feature engineering
+- REST API development
+- Browser extension development
+- React dashboard development
+- Dockerized deployment
+- AWS cloud deployment readiness
 
-Features
+---
 
-Real-time phishing URL detection
+## Core Features
 
-Machine learning-powered prediction engine
+### Phishing Detection API
+- Real-time URL risk analysis
+- URL validation before prediction
+- ML-based phishing probability scoring
+- Response time tracking
+- Health check endpoint for deployment monitoring
+- Structured JSON API responses
 
-Flask REST API backend
+### Machine Learning
+- RandomForest-based phishing detection model
+- URL feature extraction pipeline
+- Detects suspicious patterns such as:
+  - IP-based URLs
+  - Long URLs
+  - URL shorteners
+  - `@` symbols
+  - Multiple subdomains
+  - Suspicious keywords
+  - Fake HTTPS tokens inside domains
 
-React + Vite frontend dashboard
+### Dashboard
+- React + Vite frontend
+- URL input and prediction flow
+- API integration with Flask backend
+- Production build support for AWS Amplify
 
-Dockerized backend service
+### Chrome Extension
+- Suspicious link interception
+- Secure sandbox-style opening flow
+- Omnibox support using the `sandbox` keyword
+- Popup UI showing latest phishing result
+- Option to open the original URL after checking
 
-Gunicorn production server
+### DevOps / Cloud Readiness
+- Dockerized Flask backend
+- Gunicorn production server
+- AWS App Runner configuration
+- AWS Amplify frontend build configuration
+- Environment-variable based frontend API URL
+- Health endpoint for cloud monitoring
 
-Health monitoring endpoint
+---
 
-Fast inference response times
+## Tech Stack
 
-Cloud deployment ready
+| Layer | Technologies |
+|---|---|
+| Backend | Python, Flask, Flask-CORS, Gunicorn |
+| Machine Learning | scikit-learn, pandas, NumPy, joblib, RandomForestClassifier |
+| Frontend | React, Vite, TypeScript, JavaScript |
+| Browser Extension | Chrome Manifest V3, JavaScript, HTML, CSS |
+| DevOps | Docker, Gunicorn, AWS App Runner, AWS Amplify |
+| Deployment Config | `apprunner.yaml`, `amplify.yml`, `AWS_DEPLOYMENT.md` |
 
-AWS ECS/Fargate compatible architecture
+---
 
-Tech Stack
+## Project Structure
 
-Backend
+```txt
+trustnet-cybercop/
+│
+├── backend/
+│   ├── api.py                 # Flask API with prediction and health routes
+│   ├── feature_extractor.py   # URL feature extraction logic
+│   ├── model.pkl              # Trained ML model
+│   ├── requirements.txt       # Backend Python dependencies
+│   └── Dockerfile             # Backend container setup
+│
+├── dashboard/
+│   ├── package.json           # React/Vite frontend scripts and dependencies
+│   ├── src/                   # Dashboard source code
+│   └── dist/                  # Production build output after npm run build
+│
+├── manifest.json              # Chrome extension manifest
+├── background.js              # Extension background service worker
+├── content.js                 # Suspicious link interception logic
+├── popup.html                 # Extension popup UI
+├── popup.js                   # Popup result rendering
+├── sandbox.html               # Sandbox page
+├── sandbox.js                 # Sandbox logic
+├── sandbox.css                # Sandbox styling
+│
+├── apprunner.yaml             # AWS App Runner backend deployment config
+├── amplify.yml                # AWS Amplify frontend deployment config
+├── AWS_DEPLOYMENT.md          # Cloud deployment notes
+└── README.md
+```
 
-Python
+---
 
-Flask
+## System Architecture
 
-Gunicorn
-
-scikit-learn
-
-NumPy
-
-joblib
-
-Frontend
-
-React
-
-Vite
-
-JavaScript
-
-ML & Data
-
-RandomForestClassifier
-
-Feature extraction pipeline
-
-URL-based phishing dataset
-
-DevOps & Cloud
-
-Docker
-
-AWS ECS (deployment-ready)
-
-AWS ECR
-
-CloudWatch-ready logging architecture
-
-System Architecture
-
-React Frontend
-       ↓
-Flask API Backend
-       ↓
-Feature Extraction Pipeline
-       ↓
+```txt
+User / Browser / Dashboard
+        │
+        ▼
+URL submitted for checking
+        │
+        ▼
+Flask REST API
+        │
+        ▼
+URL Feature Extraction
+        │
+        ▼
 RandomForest ML Model
-       ↓
+        │
+        ▼
 Prediction Response
+(Safe / Suspicious / Dangerous)
+```
 
-Future Cloud Deployment Architecture:
+### AWS Deployment Architecture
 
-React Frontend
-       ↓
-AWS Load Balancer / API Gateway
-       ↓
-ECS Fargate Flask API
-       ↓
+```txt
+React Dashboard
+   │
+   ▼
+AWS Amplify Hosting
+   │
+   ▼
+Flask API on AWS App Runner
+   │
+   ▼
 ML Inference Engine
-       ↓
-CloudWatch Monitoring & Logs
+   │
+   ▼
+Health Checks + Logs + Monitoring
+```
 
-API Endpoints
+---
 
-Health Check
+## API Endpoints
 
+### Root Endpoint
+
+```http
+GET /
+```
+
+Returns API service information and available endpoints.
+
+### Health Check
+
+```http
 GET /health
+```
 
-Example Response
+Example response:
 
+```json
 {
-  "model_loaded": true,
-  "status": "healthy"
+  "status": "healthy",
+  "model_loaded": true
 }
+```
 
-Predict URL
+### Predict URL
 
+```http
 POST /predict
+Content-Type: application/json
+```
 
-Request Body
+Request body:
 
+```json
 {
   "url": "https://example.com"
 }
+```
 
-Example Response
+Example response:
 
+```json
 {
+  "url": "https://example.com",
+  "status": "Safe",
   "phishing_chance": 0.0,
   "prediction": 0,
-  "response_time_ms": 158.8,
-  "status": "Safe",
-  "url": "https://example.com"
+  "response_time_ms": 158.8
 }
+```
 
-Local Development Setup
+### Prediction Status Logic
 
-Clone Repository
+| Phishing Chance | Status |
+|---:|---|
+| 0% - 39.9% | Safe |
+| 40% - 69.9% | Suspicious |
+| 70% - 100% | Dangerous |
 
+---
+
+## Local Development Setup
+
+### 1. Clone the Repository
+
+```bash
 git clone https://github.com/Harshitsharma010/trustnet-cybercop.git
 cd trustnet-cybercop
+```
 
-Backend Setup
+### 2. Backend Setup
 
+```bash
 cd backend
 python -m pip install -r requirements.txt
 python api.py
+```
 
 Backend runs on:
 
+```txt
 http://127.0.0.1:5000
+```
 
-Frontend Setup
+Test health endpoint:
 
+```bash
+curl http://127.0.0.1:5000/health
+```
+
+Test prediction endpoint:
+
+```bash
+curl -X POST http://127.0.0.1:5000/predict \
+  -H "Content-Type: application/json" \
+  -d "{\"url\":\"https://example.com\"}"
+```
+
+### 3. Dashboard Setup
+
+Open a new terminal:
+
+```bash
 cd dashboard
 npm install
 npm run dev
+```
 
-Frontend runs on:
+Dashboard runs locally on the Vite development server.
 
-http://localhost:8080
+To create a production build:
 
-Docker Setup
+```bash
+npm run build
+```
 
-Build Docker Image
+---
 
+## Docker Setup
+
+### Build Backend Image
+
+```bash
 cd backend
-docker build -t trustnet-api .
+docker build -t trustnet-cybercop-api .
+```
 
-Run Docker Container
+### Run Backend Container
 
-docker run -p 5000:5000 trustnet-api
+```bash
+docker run -p 5000:5000 trustnet-cybercop-api
+```
 
-Production Features
+Then open:
 
-Gunicorn Production Server
+```txt
+http://localhost:5000/health
+```
 
-The backend uses Gunicorn for production-grade API serving.
+---
 
-Health Monitoring
+## Chrome Extension Setup
 
-A dedicated /health endpoint allows:
+1. Open Chrome.
+2. Go to:
 
-Container health checks
+```txt
+chrome://extensions/
+```
 
-ECS health monitoring
+3. Enable **Developer mode**.
+4. Click **Load unpacked**.
+5. Select the project root folder.
+6. Use the extension popup or type the omnibox keyword:
 
-Load balancer verification
+```txt
+sandbox <url>
+```
 
-Service availability checks
+The extension can intercept suspicious links and open them in the sandbox flow instead of directly navigating to the original URL.
 
-Dockerized Backend
+---
 
-The backend is fully containerized and tested locally using Docker.
+## AWS Deployment Notes
 
-Cloud Deployment Roadmap
+This repository includes cloud deployment configuration for a two-service AWS setup:
 
-Planned deployment stack:
+### Backend: AWS App Runner
 
-AWS ECR for container registry
+The backend can be deployed with AWS App Runner using `apprunner.yaml`.
 
-AWS ECS Fargate for container orchestration
+Expected production command:
 
-CloudWatch logs and monitoring
+```bash
+gunicorn --chdir backend -w 2 -b 0.0.0.0:5000 api:app
+```
 
-GitHub Actions CI/CD pipeline
+Health check endpoint:
 
-Infrastructure automation
+```txt
+https://your-app-runner-url.awsapprunner.com/health
+```
 
-Security Focus
+Prediction endpoint:
 
-This project focuses on:
+```txt
+https://your-app-runner-url.awsapprunner.com/predict
+```
 
-URL threat analysis
+### Frontend: AWS Amplify
 
-Phishing detection
+The React dashboard can be deployed with AWS Amplify using `amplify.yml`.
 
-Security-oriented feature engineering
+Set this environment variable in Amplify before building:
 
-API-based cyber threat assessment
+```txt
+VITE_API_BASE_URL=https://your-app-runner-url.awsapprunner.com
+```
 
-Project Highlights
+### Extension API URL
 
-Built a cloud-ready ML inference platform
+The extension defaults to local backend usage. After deploying the backend, update the extension API base URL while testing:
 
-Dockerized a production-style Flask backend
+```js
+chrome.storage.sync.set({
+  apiBaseUrl: "https://your-app-runner-url.awsapprunner.com"
+});
+```
 
-Integrated ML prediction APIs with a React dashboard
+---
 
-Added health monitoring endpoints for deployment readiness
+## Security & Validation
 
-Implemented real-time phishing URL analysis
+The API includes basic validation for:
 
-Designed deployment architecture compatible with AWS ECS
+- Missing URL input
+- Empty URL input
+- URL length greater than 2048 characters
+- URLs that do not start with `http://` or `https://`
+- Missing ML model file
+- Prediction runtime errors
 
-Future Improvements
+> Note: This project is built for educational and portfolio purposes. It should not be used as the only security layer for real-world phishing protection.
 
-CI/CD pipeline with GitHub Actions
+---
 
-AWS ECS Fargate deployment
+## Project Highlights
 
-CloudWatch observability integration
+- Built an end-to-end phishing detection platform using ML inference
+- Designed a Flask API with clean `/health` and `/predict` endpoints
+- Integrated a React/Vite dashboard for user-facing URL analysis
+- Added Chrome extension support for safer suspicious-link handling
+- Containerized the backend for production-style deployment
+- Prepared AWS App Runner and Amplify deployment configuration
+- Implemented URL feature extraction for phishing-risk classification
 
-Authentication & API rate limiting
+---
 
-Threat history database
+## Future Improvements
 
-Advanced phishing confidence scoring
+- Add user authentication
+- Store scan history in a database
+- Add rate limiting for API abuse protection
+- Improve dashboard UI with charts and threat analytics
+- Add CloudWatch logs and alerts
+- Add GitHub Actions CI/CD pipeline
+- Add Terraform infrastructure provisioning
+- Add model evaluation metrics and dataset documentation
+- Add domain reputation or WHOIS-based enrichment
+- Add downloadable scan reports
 
-Terraform infrastructure provisioning
+---
 
-Screenshots
+## Screenshots
 
-Add screenshots here:
+Add screenshots here after deployment:
 
-Frontend dashboard
+```md
+![Dashboard Screenshot](docs/screenshots/dashboard.png)
+![Prediction Result](docs/screenshots/prediction-result.png)
+![Chrome Extension Popup](docs/screenshots/extension-popup.png)
+![AWS Architecture](docs/screenshots/aws-architecture.png)
+```
 
-Prediction results
+---
 
-Docker container logs
+## Author
 
-AWS deployment architecture
+**Harshit Sharma**
 
-CloudWatch dashboards
+- GitHub: [Harshitsharma010](https://github.com/Harshitsharma010)
 
-Author
+---
 
-Harshit Sharma
-
-GitHub: https://github.com/Harshitsharma010
-
-License
+## License
 
 This project is intended for educational, research, and cybersecurity learning purposes.
-
