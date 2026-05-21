@@ -33,7 +33,7 @@ Deploy Amplify from the same GitHub repository and use the `dashboard` app root.
 Set this Amplify environment variable before building:
 
 ```text
-VITE_API_URL=https://your-app-runner-url.awsapprunner.com
+VITE_API_BASE_URL=https://your-app-runner-url.awsapprunner.com
 ```
 
 ## Chrome extension API URL
