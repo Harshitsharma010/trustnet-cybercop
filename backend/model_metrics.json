@@ -2,262 +2,274 @@
   "model_version": "trustnet-url-intel-v2",
   "model_profile": "free-tier-lightweight-hybrid",
   "selected_model": "extra_trees",
-  "trained_at": "2026-05-24T14:13:47Z",
-  "training_samples": 182,
+  "trained_at": "2026-05-24T19:04:22Z",
+  "training_samples": 60000,
   "feature_count": 47,
-  "data_source": "built-in deterministic URL seed corpus",
-  "selection_score": 0.9736,
+  "data_source": "UCI PhiUSIIL Phishing URL Dataset",
+  "dataset_reference": {
+    "name": "PhiUSIIL Phishing URL Dataset",
+    "repository": "UCI Machine Learning Repository",
+    "url": "https://archive.ics.uci.edu/dataset/967/phiusiil+phishing+url+dataset",
+    "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+    "full_instances": 235795,
+    "full_legitimate_urls": 134850,
+    "full_phishing_urls": 100945,
+    "training_rows_used": 60000,
+    "local_data_committed": false
+  },
+  "selection_score": 0.996,
   "thresholds": {
     "safe_max": 39.9,
     "danger_min": 70.0
   },
   "selected_metrics": {
-    "accuracy": 0.9783,
-    "precision": 1.0,
-    "recall": 0.9615,
-    "f1": 0.9804,
-    "roc_auc": 0.9933,
+    "accuracy": 0.9965,
+    "precision": 0.998,
+    "recall": 0.9951,
+    "f1": 0.9965,
+    "roc_auc": 0.9979,
     "confusion_matrix": [
       [
-        20,
-        0
+        7485,
+        15
       ],
       [
-        1,
-        25
+        37,
+        7463
       ]
     ],
     "classification_report": {
       "legitimate": {
-        "precision": 0.9523809523809523,
-        "recall": 1.0,
-        "f1-score": 0.975609756097561,
-        "support": 20.0
+        "precision": 0.9950810954533369,
+        "recall": 0.998,
+        "f1-score": 0.9965384103315138,
+        "support": 7500.0
       },
       "phishing": {
-        "precision": 1.0,
-        "recall": 0.9615384615384616,
-        "f1-score": 0.9803921568627451,
-        "support": 26.0
+        "precision": 0.9979941160738165,
+        "recall": 0.9950666666666667,
+        "f1-score": 0.9965282414207505,
+        "support": 7500.0
       },
-      "accuracy": 0.9782608695652174,
+      "accuracy": 0.9965333333333334,
       "macro avg": {
-        "precision": 0.9761904761904762,
-        "recall": 0.9807692307692308,
-        "f1-score": 0.9780009564801531,
-        "support": 46.0
+        "precision": 0.9965376057635766,
+        "recall": 0.9965333333333333,
+        "f1-score": 0.9965333258761322,
+        "support": 15000.0
       },
       "weighted avg": {
-        "precision": 0.979296066252588,
-        "recall": 0.9782608695652174,
-        "f1-score": 0.9783128521822302,
-        "support": 46.0
+        "precision": 0.9965376057635768,
+        "recall": 0.9965333333333334,
+        "f1-score": 0.9965333258761321,
+        "support": 15000.0
       }
     }
   },
   "candidate_metrics": {
     "extra_trees": {
-      "accuracy": 0.9783,
-      "precision": 1.0,
-      "recall": 0.9615,
-      "f1": 0.9804,
-      "roc_auc": 0.9933,
+      "accuracy": 0.9965,
+      "precision": 0.998,
+      "recall": 0.9951,
+      "f1": 0.9965,
+      "roc_auc": 0.9979,
       "confusion_matrix": [
         [
-          20,
-          0
+          7485,
+          15
         ],
         [
-          1,
-          25
+          37,
+          7463
         ]
       ],
       "classification_report": {
         "legitimate": {
-          "precision": 0.9523809523809523,
-          "recall": 1.0,
-          "f1-score": 0.975609756097561,
-          "support": 20.0
+          "precision": 0.9950810954533369,
+          "recall": 0.998,
+          "f1-score": 0.9965384103315138,
+          "support": 7500.0
         },
         "phishing": {
-          "precision": 1.0,
-          "recall": 0.9615384615384616,
-          "f1-score": 0.9803921568627451,
-          "support": 26.0
+          "precision": 0.9979941160738165,
+          "recall": 0.9950666666666667,
+          "f1-score": 0.9965282414207505,
+          "support": 7500.0
         },
-        "accuracy": 0.9782608695652174,
+        "accuracy": 0.9965333333333334,
         "macro avg": {
-          "precision": 0.9761904761904762,
-          "recall": 0.9807692307692308,
-          "f1-score": 0.9780009564801531,
-          "support": 46.0
+          "precision": 0.9965376057635766,
+          "recall": 0.9965333333333333,
+          "f1-score": 0.9965333258761322,
+          "support": 15000.0
         },
         "weighted avg": {
-          "precision": 0.979296066252588,
-          "recall": 0.9782608695652174,
-          "f1-score": 0.9783128521822302,
-          "support": 46.0
+          "precision": 0.9965376057635768,
+          "recall": 0.9965333333333334,
+          "f1-score": 0.9965333258761321,
+          "support": 15000.0
         }
       }
     },
     "random_forest": {
-      "accuracy": 0.8696,
-      "precision": 1.0,
-      "recall": 0.7692,
-      "f1": 0.8696,
-      "roc_auc": 0.9942,
+      "accuracy": 0.9967,
+      "precision": 0.9996,
+      "recall": 0.9939,
+      "f1": 0.9967,
+      "roc_auc": 0.9987,
       "confusion_matrix": [
         [
-          20,
-          0
+          7497,
+          3
         ],
         [
-          6,
-          20
+          46,
+          7454
         ]
       ],
       "classification_report": {
         "legitimate": {
-          "precision": 0.7692307692307693,
-          "recall": 1.0,
-          "f1-score": 0.8695652173913043,
-          "support": 20.0
+          "precision": 0.9939016306509346,
+          "recall": 0.9996,
+          "f1-score": 0.996742671009772,
+          "support": 7500.0
         },
         "phishing": {
-          "precision": 1.0,
-          "recall": 0.7692307692307693,
-          "f1-score": 0.8695652173913043,
-          "support": 26.0
+          "precision": 0.9995976934424031,
+          "recall": 0.9938666666666667,
+          "f1-score": 0.996723941966972,
+          "support": 7500.0
         },
-        "accuracy": 0.8695652173913043,
+        "accuracy": 0.9967333333333334,
         "macro avg": {
-          "precision": 0.8846153846153846,
-          "recall": 0.8846153846153846,
-          "f1-score": 0.8695652173913043,
-          "support": 46.0
+          "precision": 0.9967496620466689,
+          "recall": 0.9967333333333334,
+          "f1-score": 0.996733306488372,
+          "support": 15000.0
         },
         "weighted avg": {
-          "precision": 0.899665551839465,
-          "recall": 0.8695652173913043,
-          "f1-score": 0.8695652173913043,
-          "support": 46.0
+          "precision": 0.9967496620466689,
+          "recall": 0.9967333333333334,
+          "f1-score": 0.9967333064883719,
+          "support": 15000.0
         }
       }
     },
     "hist_gradient_boosting": {
-      "accuracy": 0.9348,
-      "precision": 1.0,
-      "recall": 0.8846,
-      "f1": 0.9388,
-      "roc_auc": 0.9962,
+      "accuracy": 0.9969,
+      "precision": 0.9996,
+      "recall": 0.9941,
+      "f1": 0.9969,
+      "roc_auc": 0.9984,
       "confusion_matrix": [
         [
-          20,
-          0
+          7497,
+          3
         ],
         [
-          3,
-          23
+          44,
+          7456
         ]
       ],
       "classification_report": {
         "legitimate": {
-          "precision": 0.8695652173913043,
-          "recall": 1.0,
-          "f1-score": 0.9302325581395349,
-          "support": 20.0
+          "precision": 0.9941652300755868,
+          "recall": 0.9996,
+          "f1-score": 0.9968752077654411,
+          "support": 7500.0
         },
         "phishing": {
-          "precision": 1.0,
-          "recall": 0.8846153846153846,
-          "f1-score": 0.9387755102040817,
-          "support": 26.0
+          "precision": 0.999597801313849,
+          "recall": 0.9941333333333333,
+          "f1-score": 0.9968580787485795,
+          "support": 7500.0
         },
-        "accuracy": 0.9347826086956522,
+        "accuracy": 0.9968666666666667,
         "macro avg": {
-          "precision": 0.9347826086956521,
-          "recall": 0.9423076923076923,
-          "f1-score": 0.9345040341718083,
-          "support": 46.0
+          "precision": 0.996881515694718,
+          "recall": 0.9968666666666667,
+          "f1-score": 0.9968666432570104,
+          "support": 15000.0
         },
         "weighted avg": {
-          "precision": 0.943289224952741,
-          "recall": 0.9347826086956522,
-          "f1-score": 0.935061183219496,
-          "support": 46.0
+          "precision": 0.9968815156947178,
+          "recall": 0.9968666666666667,
+          "f1-score": 0.9968666432570104,
+          "support": 15000.0
         }
       }
     }
   },
   "top_features": [
     {
-      "feature": "has_prefix_suffix",
-      "importance": 0.15845
-    },
-    {
-      "feature": "suspicious_tld",
-      "importance": 0.15538
-    },
-    {
-      "feature": "brand_in_host",
-      "importance": 0.11637
-    },
-    {
-      "feature": "long_hostname",
-      "importance": 0.07281
-    },
-    {
-      "feature": "keyword_count",
-      "importance": 0.06709
-    },
-    {
-      "feature": "hostname_length",
-      "importance": 0.06286
-    },
-    {
-      "feature": "num_hyphens",
-      "importance": 0.04192
+      "feature": "uses_http",
+      "importance": 0.1944
     },
     {
       "feature": "uses_https",
-      "importance": 0.04079
+      "importance": 0.19049
     },
     {
-      "feature": "credential_keyword_count",
-      "importance": 0.03686
+      "feature": "num_slashes",
+      "importance": 0.10501
     },
     {
-      "feature": "uses_http",
-      "importance": 0.03631
+      "feature": "path_length",
+      "importance": 0.07051
     },
     {
-      "feature": "num_query_params",
-      "importance": 0.03243
+      "feature": "path_entropy",
+      "importance": 0.06606
     },
     {
-      "feature": "hostname_entropy",
-      "importance": 0.02023
-    },
-    {
-      "feature": "url_length",
-      "importance": 0.01942
-    },
-    {
-      "feature": "subdomain_depth",
-      "importance": 0.01525
+      "feature": "free_hosting_domain",
+      "importance": 0.05389
     },
     {
       "feature": "digit_ratio",
-      "importance": 0.01302
+      "importance": 0.04454
     },
     {
-      "feature": "many_hyphens",
-      "importance": 0.01198
+      "feature": "long_hostname",
+      "importance": 0.03531
+    },
+    {
+      "feature": "num_digits",
+      "importance": 0.03079
+    },
+    {
+      "feature": "many_digits",
+      "importance": 0.02323
+    },
+    {
+      "feature": "subdomain_depth",
+      "importance": 0.02004
+    },
+    {
+      "feature": "hostname_entropy",
+      "importance": 0.01945
+    },
+    {
+      "feature": "url_length",
+      "importance": 0.01905
+    },
+    {
+      "feature": "num_hyphens",
+      "importance": 0.01882
+    },
+    {
+      "feature": "num_subdomains",
+      "importance": 0.01809
+    },
+    {
+      "feature": "long_url",
+      "importance": 0.01381
     }
   ],
   "notes": [
     "Inference is lightweight and AWS Free Tier friendly.",
-    "The built-in corpus is for deterministic portfolio demos; pass --dataset-csv for a larger real labeled URL feed.",
+    "The model artifact is trained locally and deployed without shipping the raw dataset to AWS.",
+    "Use --dataset seed only for deterministic smoke tests; default training uses the public UCI PhiUSIIL dataset.",
     "The API combines model probability with explainable URL risk signals."
   ]
 }

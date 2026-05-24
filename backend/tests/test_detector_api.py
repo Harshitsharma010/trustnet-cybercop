@@ -38,6 +38,7 @@ class DetectorApiTests(unittest.TestCase):
         self.assertTrue(info["model_loaded"])
         self.assertEqual(info["feature_count"], 47)
         self.assertIn("aws_free_tier_posture", info)
+        self.assertGreaterEqual(info["metrics_summary"]["recall"], 0.99)
 
     def test_flask_predict_endpoint(self):
         client = api.app.test_client()

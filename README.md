@@ -272,13 +272,34 @@ Extra Trees model + explainable signal scoring
 Prediction + risk reasons + confidence
 ```
 
-The model is trained using `backend/train_model.py`, which builds a deterministic local seed corpus by default, compares multiple lightweight scikit-learn models, selects the strongest model by phishing-focused metrics, and saves both `backend/model.pkl` and `backend/model_metrics.json`.
+The model is trained using `backend/train_model.py`, which downloads the public UCI PhiUSIIL Phishing URL Dataset by default, extracts TrustNet's 47 URL intelligence features, compares multiple lightweight scikit-learn models, selects the strongest model by phishing-focused metrics, and saves both `backend/model.pkl` and `backend/model_metrics.json`.
+
+Current checked-in model:
+
+| Item | Value |
+| --- | ---: |
+| Dataset | UCI PhiUSIIL Phishing URL Dataset |
+| Full dataset size | 235,795 URLs |
+| Training rows used | 60,000 balanced URLs |
+| Held-out evaluation rows | 15,000 URLs |
+| Accuracy | 99.65% |
+| Precision | 99.80% |
+| Recall | 99.51% |
+| F1 | 99.65% |
+| ROC-AUC | 99.79% |
 
 For a larger real-world run, pass a CSV with `url,label` columns:
 
 ```bash
 cd backend
 python train_model.py --dataset-csv path/to/urls.csv
+```
+
+To train on the full downloaded PhiUSIIL dataset instead of the default balanced sample:
+
+```bash
+cd backend
+python train_model.py --dataset phiusiil --max-samples 0
 ```
 
 ## Chrome Extension Workflow
@@ -452,6 +473,7 @@ trustnet-cybercop/
 |-- amplify.yml
 |-- AWS_DEPLOYMENT.md
 |-- AWS_FREE_TIER.md
+|-- DATASET.md
 |-- MODEL_CARD.md
 `-- README.md
 ```
@@ -471,7 +493,7 @@ The repository includes local proof assets for the upgraded dashboard and API. C
 | Dashboard UI | Included | [Dashboard screenshot](docs/screenshots/dashboard.png) |
 | API health | Included | [API health screenshot](docs/screenshots/api-health.png) |
 | Prediction API | Verified | `backend/tests/test_detector_api.py` covers safe and dangerous URL predictions |
-| Model metrics | Included | `backend/model_metrics.json` and [MODEL_CARD.md](MODEL_CARD.md) |
+| Model metrics | Included | UCI-trained metrics in `backend/model_metrics.json` and [MODEL_CARD.md](MODEL_CARD.md) |
 | AWS Free Tier path | Included | [AWS_FREE_TIER.md](AWS_FREE_TIER.md), `backend/lambda_handler.py`, `backend/Dockerfile.lambda` |
 | React production build | Verified | `npm run build` passes for the Vite dashboard |
 | Backend tests | Verified | `python -m unittest discover -s backend/tests` passes |
@@ -507,7 +529,7 @@ The local Flask API reports the upgraded model version, feature count, and Free 
 
 This project is intentionally scoped as a portfolio and learning project. The current implementation demonstrates the end-to-end workflow, but production usage would require additional safeguards:
 
-- The included model metrics are based on the deterministic local seed corpus; use `--dataset-csv` for a larger real phishing feed.
+- The checked-in model is trained on a balanced 60,000-row sample from UCI PhiUSIIL; use `--max-samples 0` or `--dataset-csv` for larger retraining runs.
 - URL-only detection cannot catch every phishing attack.
 - Domain reputation, WHOIS, DNS, screenshot, and page-content analysis are intentionally not included in fast mode to keep AWS costs low.
 - The Chrome extension flow is designed for demonstration and testing.
