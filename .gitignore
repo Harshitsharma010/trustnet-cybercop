@@ -7,3 +7,13 @@ __pycache__
 *.pyc
 *.tsbuildinfo
 .env
+
+# Build artifacts and local IDE files
+*.apk
+*.iml
+.idea/
+.gradle/
+
+# OS metadata
+.DS_Store
+Thumbs.db

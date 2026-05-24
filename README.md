@@ -448,14 +448,6 @@ trustnet-cybercop/
 |   `-- tsconfig.json
 |-- extension/
 |   `-- fixed_extension/
-|-- manifest.json
-|-- background.js
-|-- content.js
-|-- popup.html
-|-- popup.js
-|-- sandbox.html
-|-- sandbox.js
-|-- sandbox.css
 |-- apprunner.yaml
 |-- amplify.yml
 |-- AWS_DEPLOYMENT.md
@@ -483,7 +475,7 @@ The repository includes local proof assets for the upgraded dashboard and API. C
 | AWS Free Tier path | Included | [AWS_FREE_TIER.md](AWS_FREE_TIER.md), `backend/lambda_handler.py`, `backend/Dockerfile.lambda` |
 | React production build | Verified | `npm run build` passes for the Vite dashboard |
 | Backend tests | Verified | `python -m unittest discover -s backend/tests` passes |
-| Chrome extension workflow | Included | `extension/fixed_extension/` plus root extension files |
+| Chrome extension workflow | Included | Canonical Manifest V3 extension in `extension/fixed_extension/` |
 | Cloud deployment proof | Pending | Add Lambda/API Gateway and Amplify screenshots after hosting |
 
 ### API Health Proof
