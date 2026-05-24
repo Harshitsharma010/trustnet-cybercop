@@ -466,28 +466,38 @@ trustnet-cybercop/
 
 ## Screenshots / Demo Proof
 
-Add proof here after capturing the working app.
+The repository includes local proof assets for the upgraded dashboard and API. Cloud deployment screenshots can be added after the AWS Lambda/API Gateway and Amplify deployment is live.
 
-| Proof | Status |
-| --- | --- |
-| Dashboard screenshot | `[Add Screenshot]` |
-| Prediction result screenshot | `[Add Screenshot]` |
-| Chrome extension popup screenshot | `[Add Screenshot]` |
-| API health check screenshot | `[Add Screenshot]` |
-| Docker container running screenshot | `[Add Screenshot]` |
-| AWS Lambda/API Gateway deployment screenshot | `[Add Screenshot]` |
-| AWS Amplify deployment screenshot | `[Add Screenshot]` |
-| Short demo video or GIF | `[Add Demo Link]` |
+### Dashboard Preview
 
-Suggested file paths:
+![TrustNet CyberCop dashboard showing the URL scanner, risk panel, session stats, and model evidence section](docs/screenshots/dashboard.png)
 
-```text
-docs/screenshots/dashboard.png
-docs/screenshots/prediction-result.png
-docs/screenshots/extension-popup.png
-docs/screenshots/api-health.png
-docs/screenshots/aws-lambda-api-gateway.png
-docs/screenshots/aws-amplify.png
+### Proof Matrix
+
+| Proof Area | Status | Evidence |
+| --- | --- | --- |
+| Dashboard UI | Included | [Dashboard screenshot](docs/screenshots/dashboard.png) |
+| API health | Included | [API health screenshot](docs/screenshots/api-health.png) |
+| Prediction API | Verified | `backend/tests/test_detector_api.py` covers safe and dangerous URL predictions |
+| Model metrics | Included | `backend/model_metrics.json` and [MODEL_CARD.md](MODEL_CARD.md) |
+| AWS Free Tier path | Included | [AWS_FREE_TIER.md](AWS_FREE_TIER.md), `backend/lambda_handler.py`, `backend/Dockerfile.lambda` |
+| React production build | Verified | `npm run build` passes for the Vite dashboard |
+| Backend tests | Verified | `python -m unittest discover -s backend/tests` passes |
+| Chrome extension workflow | Included | `extension/fixed_extension/` plus root extension files |
+| Cloud deployment proof | Pending | Add Lambda/API Gateway and Amplify screenshots after hosting |
+
+### API Health Proof
+
+The local Flask API reports the upgraded model version, feature count, and Free Tier friendly profile:
+
+```json
+{
+  "feature_count": 47,
+  "model_loaded": true,
+  "model_version": "trustnet-url-intel-v2",
+  "profile": "free-tier-lightweight-hybrid",
+  "status": "healthy"
+}
 ```
 
 ## Security Considerations
