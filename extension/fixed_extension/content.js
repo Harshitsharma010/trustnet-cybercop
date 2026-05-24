@@ -142,7 +142,7 @@ async function scanAndHandle(url) {
     if (result.error) {
       // If API is down, allow user to proceed
       const proceed = confirm(
-        `⚠️ Unable to verify link safety.\n\n` +
+        `Unable to verify link safety.\n\n` +
         `URL: ${url}\n\n` +
         `API is not reachable. Proceed anyway?`
       );
@@ -154,12 +154,18 @@ async function scanAndHandle(url) {
     }
 
     if (result.status === 'Dangerous') {
+      const score = result.risk_score ?? result.phishing_chance ?? 'Unknown';
+      const reasons = Array.isArray(result.reasons)
+        ? result.reasons.slice(0, 3).map((reason) => `- ${reason.label || 'Risk signal'}`).join('\n')
+        : 'No detailed reasons returned.';
       const choice = confirm(
-        `🚨 DANGER: This link is highly suspicious!\n\n` +
+        `DANGER: This link is highly suspicious!\n\n` +
         `URL: ${url}\n` +
-        `Phishing Probability: ${result.phishing_chance}%\n\n` +
-        `❌ Click CANCEL to stay safe (recommended)\n` +
-        `⚠️ Click OK to open in sandbox (advanced users only)`
+        `Risk score: ${score}%\n` +
+        `Confidence: ${result.confidence || 'Unknown'}\n\n` +
+        `${reasons}\n\n` +
+        `Click CANCEL to stay safe.\n` +
+        `Click OK to open in sandbox.`
       );
       
       if (choice) {
@@ -170,10 +176,11 @@ async function scanAndHandle(url) {
         });
       }
     } else if (result.status === 'Suspicious') {
+      const score = result.risk_score ?? result.phishing_chance ?? 'Unknown';
       const proceed = confirm(
-        `⚠️ CAUTION: This link appears suspicious.\n\n` +
+        `CAUTION: This link appears suspicious.\n\n` +
         `URL: ${url}\n` +
-        `Phishing Probability: ${result.phishing_chance}%\n\n` +
+        `Risk score: ${score}%\n\n` +
         `Do you want to continue?`
       );
       
@@ -190,7 +197,7 @@ async function scanAndHandle(url) {
     
     // On error, ask user
     const proceed = confirm(
-      `⚠️ Error checking link.\n\nURL: ${url}\n\nProceed anyway?`
+      `Error checking link.\n\nURL: ${url}\n\nProceed anyway?`
     );
     
     if (proceed) {
@@ -205,7 +212,7 @@ function scanInBackground(url) {
     { action: 'scanUrl', url: url },
     (response) => {
       if (response && response.status === 'Dangerous') {
-        console.warn('⚠️ Dangerous link detected:', url);
+        console.warn('Dangerous link detected:', url);
         // Could show a subtle warning badge on the link
       }
     }

@@ -2,7 +2,7 @@ import type { FormEvent } from "react";
 import type { HealthState } from "../types";
 import { Icon } from "./Icon";
 
-const QUICK_SCAN_URLS = ["https://example.com", "http://secure-login.verify-account.com", "https://github.com"];
+const QUICK_SCAN_URLS = ["https://github.com", "http://secure-login.verify-account.com/update/password", "https://paypal-security-login.xyz/verify"];
 
 type UrlScannerProps = {
   value: string;
@@ -10,9 +10,11 @@ type UrlScannerProps = {
   loading: boolean;
   healthState: HealthState;
   apiBaseUrl: string;
+  deepScan: boolean;
   onChange: (value: string) => void;
   onSubmit: () => void;
   onQuickScan: (url: string) => void;
+  onDeepScanChange: (value: boolean) => void;
 };
 
 export function UrlScanner({
@@ -21,9 +23,11 @@ export function UrlScanner({
   loading,
   healthState,
   apiBaseUrl,
+  deepScan,
   onChange,
   onSubmit,
   onQuickScan,
+  onDeepScanChange,
 }: UrlScannerProps) {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -36,8 +40,8 @@ export function UrlScanner({
         <p className="eyebrow">Real-time URL intelligence</p>
         <h1 id="scanner-heading">Analyze suspicious URLs before you click</h1>
         <p>
-          TrustNet CyberCop checks URLs through a Flask ML API and turns the model response into a clear risk verdict,
-          scan history, and deployment-ready dashboard state.
+          TrustNet CyberCop combines lightweight ML inference with explainable URL risk signals, optional deep analysis,
+          local scan history, and AWS Free Tier conscious deployment paths.
         </p>
       </div>
 
@@ -63,6 +67,18 @@ export function UrlScanner({
             </button>
           </div>
         </form>
+
+        <div className="scan-mode" aria-label="Scan mode">
+          <span>Scan mode</span>
+          <div className="segmented-control">
+            <button type="button" className={!deepScan ? "active" : ""} onClick={() => onDeepScanChange(false)} disabled={loading}>
+              Fast
+            </button>
+            <button type="button" className={deepScan ? "active" : ""} onClick={() => onDeepScanChange(true)} disabled={loading}>
+              Deep
+            </button>
+          </div>
+        </div>
 
         <div className="quick-scan" aria-label="Example quick scans">
           <span>Quick scan</span>

@@ -1,4 +1,4 @@
-const DEFAULT_API_BASE_URL = "http://localhost:5000";
+const DEFAULT_API_BASE_URL = "http://127.0.0.1:5000";
 
 (function() {
   const params = new URLSearchParams(location.search);
@@ -90,7 +90,7 @@ const DEFAULT_API_BASE_URL = "http://localhost:5000";
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ url: targetUrl })
+          body: JSON.stringify({ url: targetUrl, deep_scan: false })
         }).then(response => response.json()).then(data => {
           console.log("Phishing check result:", data);
 
@@ -100,7 +100,11 @@ const DEFAULT_API_BASE_URL = "http://localhost:5000";
             alert("URL is safe");
             openOriginalFallback(targetUrl);
           } else {
-            alert("Potential phishing detected. Stay in sandbox.");
+            const score = data.risk_score ?? data.phishing_chance ?? "Unknown";
+            const reasons = Array.isArray(data.reasons)
+              ? data.reasons.slice(0, 3).map((reason) => `- ${reason.label || "Risk signal"}`).join("\n")
+              : "No detailed reasons returned.";
+            alert(`Potential phishing detected. Stay in sandbox.\n\nRisk score: ${score}%\n${reasons}`);
           }
         }).catch(error => {
           console.error("API error:", error);

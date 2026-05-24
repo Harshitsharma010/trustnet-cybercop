@@ -13,11 +13,16 @@ function formatResponseTime(value: number | null | undefined) {
   return typeof value === "number" ? `${value} ms` : "Not reported";
 }
 
+function formatScore(value: number | null | undefined) {
+  return typeof value === "number" ? `${value}%` : "--";
+}
+
 export function ResultCard({ result, loading, healthState }: ResultCardProps) {
   const tone = getRiskTone(result?.status);
   const score = result?.riskScore ?? 0;
   const ringStyle = { "--risk": score } as CSSProperties;
   const statusLabel = result?.status ?? (healthState === "offline" ? "Demo state" : "Ready");
+  const reasons = result?.reasons ?? [];
 
   return (
     <section className={`result-card ${tone} ${loading ? "loading" : ""}`} aria-live="polite">
@@ -29,7 +34,7 @@ export function ResultCard({ result, loading, healthState }: ResultCardProps) {
           {tone === "neutral" && <Icon name="shield" />}
           {statusLabel}
         </span>
-        <span className="result-mode">ML prediction</span>
+        <span className="result-mode">{result?.scanMode ? `${result.scanMode} scan` : "ML prediction"}</span>
       </div>
 
       <div className="risk-summary">
@@ -67,14 +72,58 @@ export function ResultCard({ result, loading, healthState }: ResultCardProps) {
           <dd>{loading ? "Scanning..." : formatResponseTime(result?.responseTimeMs)}</dd>
         </div>
         <div>
-          <dt>Prediction value</dt>
-          <dd>{loading ? "Pending" : result?.prediction ?? "Not reported"}</dd>
+          <dt>Confidence</dt>
+          <dd>{loading ? "Pending" : result?.confidence ?? "Not reported"}</dd>
+        </div>
+        <div>
+          <dt>Model score</dt>
+          <dd>{loading ? "Pending" : formatScore(result?.modelScore)}</dd>
+        </div>
+        <div>
+          <dt>Signal score</dt>
+          <dd>{loading ? "Pending" : formatScore(result?.heuristicScore)}</dd>
+        </div>
+        <div>
+          <dt>Model version</dt>
+          <dd>{loading ? "Pending" : result?.modelVersion ?? "Not reported"}</dd>
+        </div>
+        <div>
+          <dt>Feature count</dt>
+          <dd>{loading ? "Pending" : result?.featureCount ?? "Not reported"}</dd>
         </div>
         <div className="url-detail">
           <dt>Scanned URL</dt>
           <dd>{loading ? "Preparing request" : result?.url ?? "No URL scanned yet"}</dd>
         </div>
       </dl>
+
+      {result?.finalUrl && result.finalUrl !== result.url && (
+        <div className="final-url">
+          <span>Final URL</span>
+          <code>{result.finalUrl}</code>
+        </div>
+      )}
+
+      <div className="reason-panel">
+        <div className="reason-heading">
+          <span>Risk reasons</span>
+          <strong>{loading ? "Scanning" : reasons.length ? `${reasons.length} found` : "None found"}</strong>
+        </div>
+        {loading ? (
+          <div className="reason-empty">Collecting evidence from the API.</div>
+        ) : reasons.length ? (
+          <ul className="reason-list">
+            {reasons.slice(0, 5).map((reason, index) => (
+              <li key={`${reason.code ?? reason.label ?? "reason"}-${index}`} className={`severity-${reason.severity ?? "low"}`}>
+                <span>{reason.label ?? "Risk signal"}</span>
+                <p>{reason.detail ?? "The detector flagged this URL signal."}</p>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="reason-empty">No strong phishing indicators were returned.</div>
+        )}
+      </div>
     </section>
   );
 }

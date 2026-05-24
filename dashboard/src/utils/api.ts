@@ -1,4 +1,4 @@
-import type { BackendHealth, BackendPrediction } from "../types";
+import type { BackendHealth, BackendModelInfo, BackendModelMetrics, BackendPrediction } from "../types";
 
 const DEFAULT_API_BASE_URL = "http://127.0.0.1:5000";
 
@@ -45,20 +45,52 @@ export async function fetchHealth(): Promise<BackendHealth> {
   return payload ?? {};
 }
 
-export async function requestPrediction(url: string): Promise<BackendPrediction> {
+export async function requestPrediction(url: string, deepScan = false): Promise<BackendPrediction> {
   const response = await fetch(`${API_BASE_URL}/predict`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
     },
-    body: JSON.stringify({ url }),
+    body: JSON.stringify({ url, deep_scan: deepScan }),
   });
 
   const payload = await parseJson<BackendPrediction>(response);
 
   if (!response.ok) {
     throw new Error(errorFromPayload(payload, `Prediction failed with status ${response.status}.`));
+  }
+
+  return payload ?? {};
+}
+
+export async function fetchModelInfo(): Promise<BackendModelInfo> {
+  const response = await fetch(`${API_BASE_URL}/model/info`, {
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  const payload = await parseJson<BackendModelInfo>(response);
+
+  if (!response.ok) {
+    throw new Error(errorFromPayload(payload, `Model info failed with status ${response.status}.`));
+  }
+
+  return payload ?? {};
+}
+
+export async function fetchModelMetrics(): Promise<BackendModelMetrics> {
+  const response = await fetch(`${API_BASE_URL}/model/metrics`, {
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  const payload = await parseJson<BackendModelMetrics>(response);
+
+  if (!response.ok) {
+    throw new Error(errorFromPayload(payload, `Model metrics failed with status ${response.status}.`));
   }
 
   return payload ?? {};

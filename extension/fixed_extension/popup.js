@@ -1,9 +1,15 @@
 function updateStatus(data) {
 	const container = document.getElementById("statusContainer");
+	const score = data.risk_score ?? data.phishing_chance ?? "Unknown";
+	const reasons = Array.isArray(data.reasons)
+		? data.reasons.slice(0, 2).map((reason) => `<p>${reason.label || "Risk signal"}</p>`).join("")
+		: "";
 	container.innerHTML = `
     <div class="status-card ${data.status === "Safe" ? "safe" : "danger"}">
       <h3>Status: ${data.status}</h3>
-      <p>Reason: ${data.reason}</p>
+      <p>Risk score: ${score}%</p>
+      <p>Confidence: ${data.confidence || "Unknown"}</p>
+      ${reasons}
       <p class="url">${data.url}</p>
     </div>
   `;

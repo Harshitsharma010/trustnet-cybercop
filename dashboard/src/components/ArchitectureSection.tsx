@@ -1,6 +1,6 @@
 import { Icon } from "./Icon";
 
-const flow = ["React Dashboard", "API Gateway / Load Balancer", "Flask API", "ML Model", "Prediction Response"];
+const flow = ["Amplify Static App", "API Gateway", "Lambda Container", "Hybrid ML Detector", "Explainable Verdict"];
 
 export function ArchitectureSection() {
   return (
@@ -8,7 +8,7 @@ export function ArchitectureSection() {
       <div className="section-heading">
         <div>
           <p className="eyebrow">AWS Free Tier ready</p>
-          <h2 id="architecture-heading">Cloud Ready Architecture</h2>
+          <h2 id="architecture-heading">Cost-aware Architecture</h2>
         </div>
       </div>
 
@@ -23,10 +23,10 @@ export function ArchitectureSection() {
 
       <div className="deployment-notes">
         <p>
-          Frontend hosting fits AWS Amplify or S3 + CloudFront because the dashboard builds to static assets.
+          Frontend hosting stays static through Amplify, so no dashboard server needs to run continuously.
         </p>
         <p>
-          The Flask backend can run separately on AWS App Runner, ECS, or EC2 Free Tier depending on the deployment path.
+          Backend inference can run as a Lambda container; training remains local and deep scans stay optional.
         </p>
       </div>
     </section>

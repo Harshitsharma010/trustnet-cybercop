@@ -1,11 +1,22 @@
 # TrustNet CyberCop
 
-**Cloud-ready phishing URL detection platform with a Flask ML API, React dashboard, Chrome extension workflow, Docker setup, and AWS deployment configuration.**
+**Cloud-ready phishing URL intelligence platform with a feature-rich ML API, React dashboard, Chrome extension workflow, Lambda/App Runner deployment options, Docker setup, and AWS Free Tier conscious architecture.**
 
-TrustNet CyberCop is a cybersecurity project that analyzes suspicious URLs before a user opens them. It combines machine learning inference, URL feature extraction, a REST API, a dashboard interface, and a Chrome extension workflow to demonstrate how phishing detection can be packaged as a practical cloud-ready security tool.
+TrustNet CyberCop is a cybersecurity project that analyzes suspicious URLs before a user opens them. It combines 47-feature URL intelligence, lightweight ML inference, explainable risk reasons, a REST API, a dashboard interface, and a Chrome extension workflow to demonstrate how phishing detection can be packaged as a practical cloud-ready security tool.
 
 > **Project status**  
-> Built as a portfolio and hackathon-origin project. The repository includes working application code, a trained local model artifact, Docker/Gunicorn setup, and AWS deployment configuration. It is not presented as a production security product.
+> Built as a portfolio and hackathon-origin project. The repository includes working application code, a trained local model artifact, model metrics, Docker/Gunicorn setup, Lambda container support, and AWS deployment configuration. It is not presented as a production security product.
+
+## 2026 Upgrade Highlights
+
+| Upgrade | What changed |
+| --- | --- |
+| Feature-rich detector | Replaced the old 9-feature URL model path with a 47-feature URL intelligence pipeline |
+| Hybrid scoring | Blends scikit-learn model probability with explainable heuristic risk signals |
+| Explainable API | Returns verdict, risk score, model score, signal score, confidence, ranked reasons, features, and model version |
+| Model evidence | Adds `backend/model_metrics.json`, `/model/info`, `/model/metrics`, and `MODEL_CARD.md` |
+| AWS Free Tier path | Adds `backend/lambda_handler.py`, `backend/Dockerfile.lambda`, and `AWS_FREE_TIER.md` |
+| Dashboard intelligence | Shows fast/deep scan mode, model metadata, evaluation metrics, top features, and risk reasons |
 
 ## Why This Project Matters
 
@@ -23,25 +34,29 @@ This project is relevant for cloud, cybersecurity, AI/ML, and full-stack interns
 
 | Feature | Description |
 | --- | --- |
-| ML phishing detection | Uses URL-derived features and a trained `RandomForestClassifier` to estimate phishing risk |
+| ML phishing detection | Uses 47 URL-derived features and a trained Extra Trees model to estimate phishing risk |
+| Explainable risk scoring | Returns ranked risk reasons such as brand impersonation, IP host, URL shortener, risky TLD, and credential keywords |
+| Fast and deep scan modes | Fast mode stays URL-only for cheap inference; deep mode optionally checks redirects with short timeouts |
 | Flask REST API | Provides `/`, `/health`, and `/predict` endpoints for service status and URL scanning |
+| Lambda API handler | Provides an AWS Lambda/API Gateway path for Free Tier friendly pay-per-request hosting |
 | React dashboard | Allows users to submit URLs and view risk verdicts from the browser |
 | Chrome extension | Provides a suspicious-link checking workflow through a Manifest V3 extension |
 | Docker backend | Runs the Flask API with Gunicorn inside a container |
 | AWS deployment config | Includes App Runner and Amplify configuration files for cloud deployment planning |
 | Logging | Logs prediction metadata including URL checked, verdict, score, and response time |
 | API validation | Handles missing URLs, empty input, long URLs, invalid schemes, missing model files, and prediction errors |
+| Model reporting | Exposes model version, feature count, training metrics, top features, and Free Tier posture |
 
 ## Tech Stack
 
 | Layer | Technologies |
 | --- | --- |
 | Backend API | Python, Flask, Flask-CORS, Gunicorn |
-| Machine Learning | scikit-learn, pandas, NumPy, SciPy, joblib, RandomForestClassifier |
+| Machine Learning | scikit-learn, NumPy, SciPy via scikit-learn, joblib, ExtraTreesClassifier |
 | Frontend Dashboard | React, Vite, TypeScript |
 | Browser Extension | Chrome Manifest V3, JavaScript, HTML, CSS |
 | Containerization | Docker |
-| Cloud Deployment Plan | AWS App Runner, AWS Amplify Hosting |
+| Cloud Deployment Plan | AWS Lambda container + API Gateway, AWS Amplify Hosting, optional AWS App Runner |
 | Configuration | `apprunner.yaml`, `amplify.yml`, environment variables |
 
 ## System Architecture
@@ -63,9 +78,9 @@ Feature Extraction Pipeline
   |
   | creates model input features
   v
-RandomForest ML Model
+Hybrid ML Detector
   |
-  | returns class + probability
+  | returns class, probability, and ranked reasons
   v
 Risk Response
   |
@@ -81,10 +96,10 @@ GitHub Repository
   |
   | source deployment
   v
-AWS App Runner
+AWS Lambda Container + API Gateway
   |
-  | runs Flask + Gunicorn API
-  | exposes /health and /predict
+  | loads backend/model.pkl
+  | exposes /health, /predict, /analyze, /model/*
   v
 TrustNet Backend API
 
@@ -100,12 +115,21 @@ AWS Amplify Hosting
 TrustNet Dashboard
 ```
 
-**Backend plan**
+**Backend plan, recommended for Free Tier**
 
-- Deploy the Flask API to **AWS App Runner**.
-- Use `apprunner.yaml` from the repository root.
-- Install dependencies from `backend/requirements.txt`.
-- Start the service with Gunicorn:
+- Train locally and deploy only the saved model artifact.
+- Package the backend with `backend/Dockerfile.lambda`.
+- Use API Gateway HTTP API in front of Lambda.
+- Keep fast scans as the default and use deep scans only on demand.
+
+```bash
+cd backend
+docker build -f Dockerfile.lambda -t trustnet-cybercop-lambda .
+```
+
+**Backend plan, optional container demo**
+
+App Runner is simpler for Flask/Gunicorn demos, but it can create always-on charges. Use it only when you are comfortable with that cost model.
 
 ```bash
 gunicorn --chdir backend -w 2 -b 0.0.0.0:5000 api:app
@@ -116,14 +140,16 @@ gunicorn --chdir backend -w 2 -b 0.0.0.0:5000 api:app
 - Deploy the React dashboard to **AWS Amplify Hosting**.
 - Use `dashboard` as the app root.
 - Use the included `amplify.yml`.
-- Set `VITE_API_BASE_URL` to the App Runner backend URL.
+- Set `VITE_API_BASE_URL` to the API Gateway backend URL.
 
 **Proof to add after deployment**
 
-- `[Add App Runner health endpoint screenshot]`
+- `[Add API Gateway health endpoint screenshot]`
 - `[Add Amplify dashboard URL]`
 - `[Add deployed prediction request screenshot]`
 - `[Add AWS console deployment screenshot]`
+
+See [AWS_FREE_TIER.md](AWS_FREE_TIER.md) for the cost-control details.
 
 ## API Endpoints
 
@@ -158,9 +184,17 @@ Example response:
 }
 ```
 
+### `GET /model/info`
+
+Returns model metadata, feature count, thresholds, metrics summary, and AWS Free Tier posture.
+
+### `GET /model/metrics`
+
+Returns the saved evaluation payload from `backend/model_metrics.json`, including selected model, training sample count, precision, recall, F1, ROC-AUC, confusion matrix, and top feature importances.
+
 ### `POST /predict`
 
-Analyzes a URL and returns a phishing risk verdict.
+Runs the default fast scan. Fast scan is lightweight and does not perform external fetches.
 
 Request:
 
@@ -171,7 +205,8 @@ Content-Type: application/json
 
 ```json
 {
-  "url": "https://example.com"
+  "url": "https://example.com",
+  "deep_scan": false
 }
 ```
 
@@ -180,16 +215,29 @@ Example response:
 ```json
 {
   "url": "https://example.com",
+  "final_url": "https://example.com",
   "status": "Safe",
-  "phishing_chance": 0.0,
+  "verdict": "Safe",
+  "risk_score": 1.3,
+  "phishing_chance": 1.3,
+  "confidence": "High",
+  "model_score": 0.0,
+  "heuristic_score": 4.0,
   "prediction": 0,
+  "model_version": "trustnet-url-intel-v2",
+  "feature_count": 47,
+  "reasons": [],
   "response_time_ms": 158.8
 }
 ```
 
+### `POST /analyze`
+
+Runs deep mode. Deep mode performs a short-timeout redirect inspection and is opt-in to control cost and latency.
+
 ### Status Logic
 
-| Phishing Chance | Status |
+| Risk Score | Status |
 | ---: | --- |
 | `0% - 39.9%` | `Safe` |
 | `40% - 69.9%` | `Suspicious` |
@@ -197,7 +245,7 @@ Example response:
 
 ## ML Detection Workflow
 
-The backend converts a submitted URL into model-ready features before prediction.
+The backend converts a submitted URL into model-ready features before prediction. The deployed path is intentionally lightweight: training happens locally, while AWS only loads the saved model artifact for inference.
 
 ```text
 Submitted URL
@@ -208,26 +256,30 @@ URL validation
   v
 Feature extraction
   |
-  |-- IP address in hostname
-  |-- URL length
-  |-- URL shortener usage
-  |-- @ symbol
-  |-- double slash redirect pattern
-  |-- prefix/suffix hyphen in domain
-  |-- number of subdomains
-  |-- fake HTTPS token in domain
-  |-- suspicious keywords
+  |-- URL length, path length, query length
+  |-- hostname entropy, dots, hyphens, subdomain depth
+  |-- IP host, HTTP usage, punycode, custom port
+  |-- shortener, @ symbol, encoded characters, double slash
+  |-- brand impersonation and suspicious keyword groups
+  |-- risky TLD, executable path, free hosting domain
   v
-pandas DataFrame
+Feature vector
   |
   v
-RandomForestClassifier
+Extra Trees model + explainable signal scoring
   |
   v
-Prediction + probability
+Prediction + risk reasons + confidence
 ```
 
-The model is trained using `backend/train_model.py`, which pulls the UCI phishing dataset, maps selected dataset fields to the local feature schema, trains a balanced RandomForest classifier, and saves the model as `backend/model.pkl`.
+The model is trained using `backend/train_model.py`, which builds a deterministic local seed corpus by default, compares multiple lightweight scikit-learn models, selects the strongest model by phishing-focused metrics, and saves both `backend/model.pkl` and `backend/model_metrics.json`.
+
+For a larger real-world run, pass a CSV with `url,label` columns:
+
+```bash
+cd backend
+python train_model.py --dataset-csv path/to/urls.csv
+```
 
 ## Chrome Extension Workflow
 
@@ -302,7 +354,14 @@ Prediction request:
 ```bash
 curl -X POST http://127.0.0.1:5000/predict \
   -H "Content-Type: application/json" \
-  -d "{\"url\":\"https://example.com\"}"
+  -d "{\"url\":\"https://example.com\",\"deep_scan\":false}"
+```
+
+Model metadata:
+
+```bash
+curl http://127.0.0.1:5000/model/info
+curl http://127.0.0.1:5000/model/metrics
 ```
 
 ### 3. Run the React dashboard
@@ -319,6 +378,12 @@ Production build:
 
 ```bash
 npm run build
+```
+
+### 4. Run backend tests
+
+```bash
+python -m unittest discover -s backend/tests
 ```
 
 ## Docker Setup
@@ -349,7 +414,7 @@ The Dockerfile also includes a health check against `/health`.
 Example dashboard deployment value:
 
 ```text
-VITE_API_BASE_URL=https://your-app-runner-url.awsapprunner.com
+VITE_API_BASE_URL=https://your-api-gateway-url
 ```
 
 Example backend deployment value:
@@ -364,11 +429,18 @@ ALLOWED_ORIGINS=https://your-amplify-app-url.amplifyapp.com
 trustnet-cybercop/
 |-- backend/
 |   |-- api.py
+|   |-- detector.py
 |   |-- feature_extractor.py
+|   |-- lambda_handler.py
+|   |-- model_config.py
 |   |-- train_model.py
 |   |-- model.pkl
+|   |-- model_metrics.json
 |   |-- requirements.txt
-|   `-- Dockerfile
+|   |-- requirements-lambda.txt
+|   |-- Dockerfile
+|   |-- Dockerfile.lambda
+|   `-- tests/
 |-- dashboard/
 |   |-- src/
 |   |-- package.json
@@ -387,6 +459,8 @@ trustnet-cybercop/
 |-- apprunner.yaml
 |-- amplify.yml
 |-- AWS_DEPLOYMENT.md
+|-- AWS_FREE_TIER.md
+|-- MODEL_CARD.md
 `-- README.md
 ```
 
@@ -401,7 +475,7 @@ Add proof here after capturing the working app.
 | Chrome extension popup screenshot | `[Add Screenshot]` |
 | API health check screenshot | `[Add Screenshot]` |
 | Docker container running screenshot | `[Add Screenshot]` |
-| AWS App Runner deployment screenshot | `[Add Screenshot]` |
+| AWS Lambda/API Gateway deployment screenshot | `[Add Screenshot]` |
 | AWS Amplify deployment screenshot | `[Add Screenshot]` |
 | Short demo video or GIF | `[Add Demo Link]` |
 
@@ -412,7 +486,7 @@ docs/screenshots/dashboard.png
 docs/screenshots/prediction-result.png
 docs/screenshots/extension-popup.png
 docs/screenshots/api-health.png
-docs/screenshots/aws-apprunner.png
+docs/screenshots/aws-lambda-api-gateway.png
 docs/screenshots/aws-amplify.png
 ```
 
@@ -422,6 +496,8 @@ docs/screenshots/aws-amplify.png
 - CORS can be restricted through `ALLOWED_ORIGINS`.
 - Prediction errors are handled with structured JSON responses.
 - The model file is loaded at service startup and reported through `/health`.
+- Deep scans skip private/local hosts to reduce SSRF risk.
+- Fast scans do not perform external network fetches by default.
 - The project should not be used as the only defense against phishing.
 - For real deployment, add API rate limiting, stricter CORS, request logging controls, abuse protection, and monitoring.
 
@@ -429,9 +505,9 @@ docs/screenshots/aws-amplify.png
 
 This project is intentionally scoped as a portfolio and learning project. The current implementation demonstrates the end-to-end workflow, but production usage would require additional safeguards:
 
-- Model performance needs a documented evaluation report.
+- The included model metrics are based on the deterministic local seed corpus; use `--dataset-csv` for a larger real phishing feed.
 - URL-only detection cannot catch every phishing attack.
-- Domain reputation, WHOIS, DNS, and page-content analysis are not included yet.
+- Domain reputation, WHOIS, DNS, screenshot, and page-content analysis are intentionally not included in fast mode to keep AWS costs low.
 - The Chrome extension flow is designed for demonstration and testing.
 - Cloud deployment configs are included, but live deployment proof should be added after hosting.
 
@@ -439,11 +515,11 @@ This project is intentionally scoped as a portfolio and learning project. The cu
 
 | Area | Improvement |
 | --- | --- |
-| AWS | Add deployed App Runner and Amplify URLs with screenshots |
+| AWS | Add deployed Lambda/API Gateway and Amplify URLs with screenshots |
 | CI/CD | Add GitHub Actions for backend checks and dashboard build |
 | Monitoring | Add CloudWatch logs, metrics, and alarms |
 | Security | Add rate limiting, stricter CORS, request size limits, and safer logging |
-| ML | Add dataset documentation, evaluation metrics, confusion matrix, and retraining notes |
+| ML | Train against a larger real labeled URL feed and compare against the seed-corpus baseline |
 | Product | Add scan history, downloadable reports, and richer dashboard analytics |
 | Infrastructure | Add Terraform or AWS CDK for reproducible deployment |
 | Extension | Add configurable API URL UI and clearer extension onboarding |

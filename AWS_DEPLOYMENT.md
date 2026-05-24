@@ -1,29 +1,45 @@
-# AWS deployment
+# AWS Deployment
 
-This repo is ready for a two-service AWS deployment:
+This repo supports two backend deployment paths:
 
-1. Deploy the Flask API with AWS App Runner from the repository root.
-2. Deploy the React dashboard with AWS Amplify Hosting from the `dashboard` app root.
-3. Update the browser extension API base URL after the App Runner URL is available.
+1. **Recommended Free Tier path:** Lambda container + API Gateway HTTP API.
+2. **Optional simple demo path:** App Runner with Flask/Gunicorn.
 
-## Backend: AWS App Runner
+Use the Lambda path when your priority is avoiding always-on compute charges.
 
-Use the repository root as the App Runner source directory. App Runner will read `apprunner.yaml`, install `backend/requirements.txt`, and start:
+## Backend: Lambda Container + API Gateway
+
+The Lambda path uses:
+
+```text
+backend/lambda_handler.py
+backend/Dockerfile.lambda
+backend/requirements-lambda.txt
+```
+
+Build the image locally:
 
 ```bash
-gunicorn --chdir backend -w 2 -b 0.0.0.0:5000 api:app
+cd backend
+docker build -f Dockerfile.lambda -t trustnet-cybercop-lambda .
 ```
 
-The health endpoint is:
+Push the image to Amazon ECR, create a Lambda function from the image, then expose it through API Gateway HTTP API.
+
+The handler supports:
 
 ```text
-https://your-app-runner-url.awsapprunner.com/health
+GET  /health
+GET  /model/info
+GET  /model/metrics
+POST /predict
+POST /analyze
 ```
 
-The prediction endpoint is:
+Recommended environment variable:
 
 ```text
-https://your-app-runner-url.awsapprunner.com/predict
+ALLOWED_ORIGINS=https://your-amplify-domain.amplifyapp.com
 ```
 
 ## Frontend: AWS Amplify Hosting
@@ -33,17 +49,31 @@ Deploy Amplify from the same GitHub repository and use the `dashboard` app root.
 Set this Amplify environment variable before building:
 
 ```text
-VITE_API_BASE_URL=https://your-app-runner-url.awsapprunner.com
+VITE_API_BASE_URL=https://your-api-gateway-url
 ```
 
-## Chrome extension API URL
+## Optional Backend: AWS App Runner
 
-The extension defaults to `http://localhost:5000`. After backend deployment, set the deployed URL in Chrome extension storage:
+App Runner is simpler for Flask/Gunicorn demos, but it can create always-on charges. Use it only if you are comfortable with that cost model.
+
+Use the repository root as the App Runner source directory. App Runner will read `apprunner.yaml`, install `backend/requirements.txt`, and start:
+
+```bash
+gunicorn --chdir backend -w 2 -b 0.0.0.0:5000 api:app
+```
+
+## Chrome Extension API URL
+
+The extension defaults to `http://127.0.0.1:5000`. After backend deployment, set the deployed URL in Chrome extension storage:
 
 ```js
 chrome.storage.sync.set({
-  apiBaseUrl: "https://your-app-runner-url.awsapprunner.com"
+  apiBaseUrl: "https://your-api-gateway-url"
 });
 ```
 
 Run that from the extension service worker console while testing the unpacked extension.
+
+## Cost Notes
+
+See [AWS_FREE_TIER.md](AWS_FREE_TIER.md) for the cost-control plan. The important rule is: train locally, deploy only the model artifact, keep fast scans default, and use deep scans only when needed.

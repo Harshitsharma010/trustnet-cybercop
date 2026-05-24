@@ -3,23 +3,23 @@ import { Icon } from "./Icon";
 const steps = [
   {
     icon: "globe",
-    title: "URL Feature Extraction",
-    copy: "The backend converts the submitted URL into phishing-relevant signals for the model.",
+    title: "47 URL Signals",
+    copy: "The backend extracts lexical, domain, keyword, encoding, impersonation, and structure signals.",
   },
   {
     icon: "cpu",
-    title: "ML Risk Classification",
-    copy: "A RandomForest classifier evaluates the extracted features and returns a risk probability.",
+    title: "Hybrid ML Scoring",
+    copy: "A compact tree model is blended with explainable risk signals to keep inference lightweight.",
   },
   {
     icon: "server",
-    title: "Real-time Flask API",
-    copy: "The dashboard calls lightweight `/health` and `/predict` endpoints with a simple JSON contract.",
+    title: "Explainable API",
+    copy: "The response includes verdict, score, confidence, model metadata, and ranked risk reasons.",
   },
   {
     icon: "cloud",
-    title: "Cloud-ready Deployment",
-    copy: "The static frontend can point to any deployed backend by setting `VITE_API_BASE_URL`.",
+    title: "Free-tier Path",
+    copy: "Fast scans avoid external fetches by default; deep scans run only when explicitly requested.",
   },
 ] as const;
 

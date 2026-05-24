@@ -55,12 +55,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
           if (data.status === "Dangerous") {
             showWarning("DANGEROUS - phishing detected", data);
-            setNote(`Dangerous (${data.phishing_chance}%)`, "#dc2626");
+            setNote(`Dangerous (${data.risk_score ?? data.phishing_chance}%)`, "#dc2626");
           } else if (data.status === "Suspicious") {
             showWarning("SUSPICIOUS - exercise caution", data);
-            setNote(`Suspicious (${data.phishing_chance}%)`, "#f59e0b");
+            setNote(`Suspicious (${data.risk_score ?? data.phishing_chance}%)`, "#f59e0b");
           } else {
-            setNote(`Safe (${data.phishing_chance}%)`, "#10b981");
+            setNote(`Safe (${data.risk_score ?? data.phishing_chance}%)`, "#10b981");
           }
         })
         .catch((err) => {
@@ -72,10 +72,15 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function showWarning(title, data) {
+    const reasons = Array.isArray(data.reasons)
+      ? data.reasons.slice(0, 3).map((reason) => `- ${reason.label || "Risk signal"}`).join("\n")
+      : "No detailed reasons returned.";
     const message =
       `${title}\n\n` +
       `URL: ${data.url}\n` +
-      `Phishing Probability: ${data.phishing_chance}%\n\n` +
+      `Risk Score: ${data.risk_score ?? data.phishing_chance}%\n` +
+      `Confidence: ${data.confidence || "Unknown"}\n\n` +
+      `${reasons}\n\n` +
       "Do not enter passwords or personal information on risky sites.";
 
     alert(message);

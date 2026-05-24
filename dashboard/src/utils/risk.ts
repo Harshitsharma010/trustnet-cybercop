@@ -75,11 +75,11 @@ export function statusFromRisk(score: number | null, rawStatus?: unknown, predic
     return fallbackStatus(rawStatus, prediction);
   }
 
-  if (score <= 30) {
+  if (score < 40) {
     return "Safe";
   }
 
-  if (score <= 70) {
+  if (score < 70) {
     return "Suspicious";
   }
 
@@ -115,17 +115,29 @@ export function getRecommendation(status?: RiskStatus) {
 }
 
 export function createScanResult(payload: BackendPrediction, submittedUrl: string): ScanResult {
-  const riskScore = normalizeRiskScore(payload.phishing_chance);
-  const status = statusFromRisk(riskScore, payload.status, payload.prediction);
+  const riskScore = normalizeRiskScore(payload.risk_score ?? payload.phishing_chance);
+  const modelScore = normalizeRiskScore(payload.model_score);
+  const heuristicScore = normalizeRiskScore(payload.heuristic_score);
+  const status = statusFromRisk(riskScore, payload.verdict ?? payload.status, payload.prediction);
   const responseTimeMs = normalizeResponseTime(payload.response_time_ms);
   const prediction = payload.prediction === null || payload.prediction === undefined ? "Not reported" : String(payload.prediction);
+  const featureCount = Number(payload.feature_count);
 
   return {
     id: globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`,
     url: typeof payload.url === "string" && payload.url.trim() ? payload.url : submittedUrl,
+    finalUrl: typeof payload.final_url === "string" && payload.final_url.trim() ? payload.final_url : undefined,
     status,
     riskScore,
+    modelScore,
+    heuristicScore,
     prediction,
+    confidence: typeof payload.confidence === "string" && payload.confidence ? payload.confidence : "Not reported",
+    modelVersion: typeof payload.model_version === "string" ? payload.model_version : undefined,
+    modelProfile: typeof payload.model_profile === "string" ? payload.model_profile : undefined,
+    scanMode: typeof payload.scan_mode === "string" ? payload.scan_mode : undefined,
+    featureCount: Number.isFinite(featureCount) ? featureCount : null,
+    reasons: Array.isArray(payload.reasons) ? payload.reasons : [],
     responseTimeMs,
     scannedAt: new Date().toISOString(),
     rawStatus: payload.status,

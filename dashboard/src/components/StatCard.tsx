@@ -1,7 +1,7 @@
 import { Icon } from "./Icon";
 
 type StatCardProps = {
-  icon: "activity" | "alert" | "check" | "clock";
+  icon: "activity" | "alert" | "check" | "clock" | "shield";
   label: string;
   value: string;
   detail: string;

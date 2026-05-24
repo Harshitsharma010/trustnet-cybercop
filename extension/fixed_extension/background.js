@@ -1,4 +1,5 @@
 const DEFAULT_API_BASE_URL = "http://127.0.0.1:5000";
+let latestScanData = null;
 
 console.log("TrustNet CyberCop installed successfully");
 
@@ -54,11 +55,13 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       fetch(`${apiBaseUrl}/predict`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: msg.url })
+        body: JSON.stringify({ url: msg.url, deep_scan: false })
       })
         .then((response) => response.json())
         .then((data) => {
+          latestScanData = data;
           recordScan(data.status);
+          chrome.runtime.sendMessage({ action: "phishingResult", data });
           sendResponse(data);
         })
         .catch((error) => {
@@ -66,6 +69,11 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         });
     });
 
+    return true;
+  }
+
+  if (msg.action === "getLatestData") {
+    sendResponse(latestScanData);
     return true;
   }
 
