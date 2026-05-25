@@ -1,5 +1,7 @@
 # TrustNet CyberCop
 
+[![CI](https://github.com/Harshitsharma010/trustnet-cybercop/actions/workflows/ci.yml/badge.svg)](https://github.com/Harshitsharma010/trustnet-cybercop/actions/workflows/ci.yml)
+
 **Cloud-ready phishing URL intelligence platform with a feature-rich ML API, React dashboard, Chrome extension workflow, Lambda/App Runner deployment options, Docker setup, and AWS Free Tier conscious architecture.**
 
 TrustNet CyberCop is a cybersecurity project that analyzes suspicious URLs before a user opens them. It combines 47-feature URL intelligence, lightweight ML inference, explainable risk reasons, a REST API, a dashboard interface, and a Chrome extension workflow to demonstrate how phishing detection can be packaged as a practical cloud-ready security tool.
