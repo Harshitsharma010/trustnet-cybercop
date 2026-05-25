@@ -32,6 +32,10 @@ PHIUSIIL_CSV_PATH = DATA_DIR / "PhiUSIIL_Phishing_URL_Dataset.csv"
 DEFAULT_PHIUSIIL_SAMPLE_SIZE = 60000
 
 
+# Smoke-test fallback only. The default training path is the public UCI
+# PhiUSIIL dataset above, using a balanced 60,000-row sample unless
+# --max-samples is changed. These hand-written URLs exist only for quick
+# deterministic development checks via: python train_model.py --dataset seed.
 LEGITIMATE_URLS = [
     "https://www.google.com/search?q=cybersecurity+awareness",
     "https://github.com/Harshitsharma010/trustnet-cybercop",

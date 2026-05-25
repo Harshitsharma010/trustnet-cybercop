@@ -542,10 +542,10 @@ This project is intentionally scoped as a portfolio and learning project. The cu
 | Area | Improvement |
 | --- | --- |
 | AWS | Add deployed Lambda/API Gateway and Amplify URLs with screenshots |
-| CI/CD | Add GitHub Actions for backend checks and dashboard build |
+| CI/CD | Add deployment checks after the AWS backend and dashboard are live |
 | Monitoring | Add CloudWatch logs, metrics, and alarms |
 | Security | Add rate limiting, stricter CORS, request size limits, and safer logging |
-| ML | Train against a larger real labeled URL feed and compare against the seed-corpus baseline |
+| ML | Optionally retrain on the full PhiUSIIL dataset or additional live phishing feeds |
 | Product | Add scan history, downloadable reports, and richer dashboard analytics |
 | Infrastructure | Add Terraform or AWS CDK for reproducible deployment |
 | Extension | Add configurable API URL UI and clearer extension onboarding |
