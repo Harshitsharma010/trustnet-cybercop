@@ -1,13 +1,33 @@
 # TrustNet CyberCop
 
 [![CI](https://github.com/Harshitsharma010/trustnet-cybercop/actions/workflows/ci.yml/badge.svg)](https://github.com/Harshitsharma010/trustnet-cybercop/actions/workflows/ci.yml)
+![AWS](https://img.shields.io/badge/AWS-Deployed-FF9900?logo=amazonaws&logoColor=white)
+![Lambda](https://img.shields.io/badge/AWS%20Lambda-Container-FF9900?logo=awslambda&logoColor=white)
+![API Gateway](https://img.shields.io/badge/API%20Gateway-HTTP%20API-FF4F8B?logo=amazonapigateway&logoColor=white)
+![Amazon ECR](https://img.shields.io/badge/Amazon%20ECR-Image%20Registry-527FFF?logo=amazonecs&logoColor=white)
+![Amplify](https://img.shields.io/badge/AWS%20Amplify-Live%20Dashboard-FF9900?logo=awsamplify&logoColor=white)
+![CloudWatch](https://img.shields.io/badge/CloudWatch-Logs%20%2B%20Alarm-FF4F8B?logo=amazoncloudwatch&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?logo=docker&logoColor=white)
+![React](https://img.shields.io/badge/React-TypeScript-61DAFB?logo=react&logoColor=black)
+![Chrome Extension](https://img.shields.io/badge/Chrome%20Extension-Manifest%20V3-4285F4?logo=googlechrome&logoColor=white)
 
-**Deployed phishing URL intelligence platform with a feature-rich ML API, React dashboard, Chrome extension workflow, AWS Lambda/API Gateway backend, Docker setup, and AWS Free Tier conscious architecture.**
+**AWS-deployed phishing URL intelligence platform with a feature-rich ML API, React dashboard, Chrome extension workflow, Lambda container backend, API Gateway routes, ECR image storage, CloudWatch monitoring, and Free Tier-conscious architecture.**
 
 TrustNet CyberCop is a cybersecurity project that analyzes suspicious URLs before a user opens them. It combines 47-feature URL intelligence, lightweight ML inference, explainable risk reasons, a REST API, a dashboard interface, and a Chrome extension workflow to demonstrate how phishing detection can be packaged as a practical cloud-ready security tool.
 
 > **Project status**  
 > Built as a portfolio and hackathon-origin project. The repository includes working application code, a trained local model artifact, model metrics, Docker/Gunicorn setup, Lambda container support, AWS deployment evidence, and a Chrome extension wired to the deployed API. It is not presented as a production security product.
+
+## Recruiter Snapshot
+
+| Area | Evidence |
+| --- | --- |
+| Live cloud deployment | Amplify dashboard connected to API Gateway and Lambda |
+| Serverless backend | Python ML API packaged as a Lambda container image |
+| Container workflow | Docker image stored in Amazon ECR |
+| Monitoring | CloudWatch logs, 1-week retention, and Lambda alarm proof |
+| Security posture | URL validation, SSRF-aware deep scan, IAM proof, and [SECURITY.md](SECURITY.md) |
+| Documentation | [ARCHITECTURE.md](ARCHITECTURE.md), [MODEL_CARD.md](MODEL_CARD.md), AWS screenshots, and Free Tier notes |
 
 ## Live AWS Deployment
 
