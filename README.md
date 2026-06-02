@@ -2,12 +2,12 @@
 
 [![CI](https://github.com/Harshitsharma010/trustnet-cybercop/actions/workflows/ci.yml/badge.svg)](https://github.com/Harshitsharma010/trustnet-cybercop/actions/workflows/ci.yml)
 
-**Cloud-ready phishing URL intelligence platform with a feature-rich ML API, React dashboard, Chrome extension workflow, Lambda/App Runner deployment options, Docker setup, and AWS Free Tier conscious architecture.**
+**Deployed phishing URL intelligence platform with a feature-rich ML API, React dashboard, Chrome extension workflow, AWS Lambda/API Gateway backend, Docker setup, and AWS Free Tier conscious architecture.**
 
 TrustNet CyberCop is a cybersecurity project that analyzes suspicious URLs before a user opens them. It combines 47-feature URL intelligence, lightweight ML inference, explainable risk reasons, a REST API, a dashboard interface, and a Chrome extension workflow to demonstrate how phishing detection can be packaged as a practical cloud-ready security tool.
 
 > **Project status**  
-> Built as a portfolio and hackathon-origin project. The repository includes working application code, a trained local model artifact, model metrics, Docker/Gunicorn setup, Lambda container support, and AWS deployment configuration. It is not presented as a production security product.
+> Built as a portfolio and hackathon-origin project. The repository includes working application code, a trained local model artifact, model metrics, Docker/Gunicorn setup, Lambda container support, AWS deployment evidence, and a Chrome extension wired to the deployed API. It is not presented as a production security product.
 
 ## 2026 Upgrade Highlights
 
@@ -17,7 +17,7 @@ TrustNet CyberCop is a cybersecurity project that analyzes suspicious URLs befor
 | Hybrid scoring | Blends scikit-learn model probability with explainable heuristic risk signals |
 | Explainable API | Returns verdict, risk score, model score, signal score, confidence, ranked reasons, features, and model version |
 | Model evidence | Adds `backend/model_metrics.json`, `/model/info`, `/model/metrics`, and `MODEL_CARD.md` |
-| AWS Free Tier path | Adds `backend/lambda_handler.py`, `backend/Dockerfile.lambda`, and `AWS_FREE_TIER.md` |
+| AWS Free Tier path | Adds `backend/lambda_handler.py`, `backend/Dockerfile.lambda`, `AWS_FREE_TIER.md`, and deployed AWS proof screenshots |
 | Dashboard intelligence | Shows fast/deep scan mode, model metadata, evaluation metrics, top features, and risk reasons |
 
 ## Why This Project Matters
@@ -44,7 +44,7 @@ This project is relevant for cloud, cybersecurity, AI/ML, and full-stack interns
 | React dashboard | Allows users to submit URLs and view risk verdicts from the browser |
 | Chrome extension | Provides a suspicious-link checking workflow through a Manifest V3 extension |
 | Docker backend | Runs the Flask API with Gunicorn inside a container |
-| AWS deployment config | Includes App Runner and Amplify configuration files for cloud deployment planning |
+| AWS deployment | Includes deployed Lambda/API Gateway backend evidence, Amplify hosting proof, ECR image proof, and CloudWatch logs |
 | Logging | Logs prediction metadata including URL checked, verdict, score, and response time |
 | API validation | Handles missing URLs, empty input, long URLs, invalid schemes, missing model files, and prediction errors |
 | Model reporting | Exposes model version, feature count, training metrics, top features, and Free Tier posture |
@@ -58,7 +58,7 @@ This project is relevant for cloud, cybersecurity, AI/ML, and full-stack interns
 | Frontend Dashboard | React, Vite, TypeScript |
 | Browser Extension | Chrome Manifest V3, JavaScript, HTML, CSS |
 | Containerization | Docker |
-| Cloud Deployment Plan | AWS Lambda container + API Gateway, AWS Amplify Hosting, optional AWS App Runner |
+| Cloud Deployment | AWS Lambda container + API Gateway, AWS Amplify Hosting, optional AWS App Runner |
 | Configuration | `apprunner.yaml`, `amplify.yml`, environment variables |
 
 ## System Architecture
@@ -91,7 +91,7 @@ Risk Response
 Dashboard or Extension UI
 ```
 
-## AWS Free Tier Deployment Plan
+## AWS Free Tier Deployment
 
 ```text
 GitHub Repository
@@ -123,6 +123,11 @@ TrustNet Dashboard
 - Package the backend with `backend/Dockerfile.lambda`.
 - Use API Gateway HTTP API in front of Lambda.
 - Keep fast scans as the default and use deep scans only on demand.
+- Deployed API Gateway base URL:
+
+```text
+https://uen2ef1nt3.execute-api.ap-south-1.amazonaws.com
+```
 
 ```bash
 cd backend
@@ -144,12 +149,16 @@ gunicorn --chdir backend -w 2 -b 0.0.0.0:5000 api:app
 - Use the included `amplify.yml`.
 - Set `VITE_API_BASE_URL` to the API Gateway backend URL.
 
-**Proof to add after deployment**
+**Deployment proof**
 
-- `[Add API Gateway health endpoint screenshot]`
-- `[Add Amplify dashboard URL]`
-- `[Add deployed prediction request screenshot]`
-- `[Add AWS console deployment screenshot]`
+- [ECR image tagged latest](screenshots/aws/01-ecr-image-latest.png)
+- [Lambda function overview](screenshots/aws/lambda-function-overview.png)
+- [API Gateway routes](screenshots/aws/api-gateway-routes.png)
+- [API Gateway invoke URL](screenshots/aws/api-gateway-invoke-url.png)
+- [Amplify deployment success](screenshots/aws/amplify-deployment-success.png)
+- [Amplify live dashboard](screenshots/aws/amplify-dashboard-live.png)
+- [CloudWatch log events](screenshots/aws/cloudwatch-log-events.png)
+- [Chrome extension live scan](screenshots/aws/chrome-extension-live.png)
 
 See [AWS_FREE_TIER.md](AWS_FREE_TIER.md) for the cost-control details.
 
@@ -335,6 +344,11 @@ Extension capabilities in this repository:
 - Content script flow
 - Popup UI for latest phishing result
 - Sandbox page for controlled link review
+- Default API target set to the deployed API Gateway backend:
+
+```text
+https://uen2ef1nt3.execute-api.ap-south-1.amazonaws.com/predict
+```
 
 ## Local Development Setup
 
@@ -446,7 +460,7 @@ The Dockerfile also includes a health check against `/health`.
 Example dashboard deployment value:
 
 ```text
-VITE_API_BASE_URL=https://your-api-gateway-url
+VITE_API_BASE_URL=https://uen2ef1nt3.execute-api.ap-south-1.amazonaws.com
 ```
 
 Example backend deployment value:
@@ -480,6 +494,8 @@ trustnet-cybercop/
 |   `-- tsconfig.json
 |-- extension/
 |   `-- fixed_extension/
+|-- screenshots/
+|   `-- aws/
 |-- apprunner.yaml
 |-- amplify.yml
 |-- AWS_DEPLOYMENT.md
@@ -491,11 +507,29 @@ trustnet-cybercop/
 
 ## Screenshots / Demo Proof
 
-The repository includes local proof assets for the upgraded dashboard and API. Cloud deployment screenshots can be added after the AWS Lambda/API Gateway and Amplify deployment is live.
+The repository includes local proof assets and AWS deployment evidence for the upgraded dashboard, Lambda/API Gateway backend, Amplify hosting, CloudWatch logs, and Chrome extension flow.
 
 ### Dashboard Preview
 
 ![TrustNet CyberCop dashboard showing the URL scanner, risk panel, session stats, and model evidence section](docs/screenshots/dashboard.png)
+
+### Live AWS Dashboard
+
+![TrustNet CyberCop dashboard deployed on AWS Amplify and connected to the API Gateway backend](screenshots/aws/amplify-dashboard-live.png)
+
+### AWS Deployment Evidence
+
+| Evidence | Screenshot |
+| --- | --- |
+| ECR Lambda container image | [ECR latest image](screenshots/aws/01-ecr-image-latest.png) |
+| Lambda function configured from container image | [Lambda function overview](screenshots/aws/lambda-function-overview.png) |
+| API Gateway routes for `/health`, `/predict`, `/analyze`, and model metadata | [API Gateway routes](screenshots/aws/api-gateway-routes.png) |
+| API Gateway invoke URL | [API Gateway invoke URL](screenshots/aws/api-gateway-invoke-url.png) |
+| Amplify deployment completed successfully | [Amplify deployment success](screenshots/aws/amplify-deployment-success.png) |
+| Amplify-hosted dashboard calling the deployed API | [Amplify live dashboard](screenshots/aws/amplify-dashboard-live.png) |
+| CloudWatch logging and retention configured | [CloudWatch retention](screenshots/aws/cloudwatch-log-group-retention.png) |
+| Lambda/API runtime log events | [CloudWatch log events](screenshots/aws/cloudwatch-log-events.png) |
+| Chrome extension live scan using the deployed backend | [Chrome extension live scan](screenshots/aws/chrome-extension-live.png) |
 
 ### Proof Matrix
 
@@ -505,15 +539,15 @@ The repository includes local proof assets for the upgraded dashboard and API. C
 | API health | Included | [API health screenshot](docs/screenshots/api-health.png) |
 | Prediction API | Verified | `backend/tests/test_detector_api.py` covers safe and dangerous URL predictions |
 | Model metrics | Included | UCI-trained metrics in `backend/model_metrics.json` and [MODEL_CARD.md](MODEL_CARD.md) |
-| AWS Free Tier path | Included | [AWS_FREE_TIER.md](AWS_FREE_TIER.md), `backend/lambda_handler.py`, `backend/Dockerfile.lambda` |
+| AWS Free Tier path | Deployed | [AWS_FREE_TIER.md](AWS_FREE_TIER.md), `backend/lambda_handler.py`, `backend/Dockerfile.lambda`, and [AWS screenshots](screenshots/aws/) |
 | React production build | Verified | `npm run build` passes for the Vite dashboard |
 | Backend tests | Verified | `python -m unittest discover -s backend/tests` passes |
-| Chrome extension workflow | Included | Canonical Manifest V3 extension in `extension/fixed_extension/` |
-| Cloud deployment proof | Pending | Add Lambda/API Gateway and Amplify screenshots after hosting |
+| Chrome extension workflow | Deployed API target | Canonical Manifest V3 extension in `extension/fixed_extension/` and [live extension proof](screenshots/aws/chrome-extension-live.png) |
+| Cloud deployment proof | Included | ECR, Lambda, API Gateway, Amplify, and CloudWatch evidence in `screenshots/aws/` |
 
 ### API Health Proof
 
-The local Flask API reports the upgraded model version, feature count, and Free Tier friendly profile:
+The Flask/Lambda API reports the upgraded model version, feature count, and Free Tier friendly profile:
 
 ```json
 {
@@ -544,15 +578,15 @@ This project is intentionally scoped as a portfolio and learning project. The cu
 - URL-only detection cannot catch every phishing attack.
 - Domain reputation, WHOIS, DNS, screenshot, and page-content analysis are intentionally not included in fast mode to keep AWS costs low.
 - The Chrome extension flow is designed for demonstration and testing.
-- Cloud deployment configs are included, but live deployment proof should be added after hosting.
+- The AWS deployment is configured for portfolio demonstration; production usage would need stronger abuse protection and monitoring.
 
 ## Future Improvements
 
 | Area | Improvement |
 | --- | --- |
-| AWS | Add deployed Lambda/API Gateway and Amplify URLs with screenshots |
-| CI/CD | Add deployment checks after the AWS backend and dashboard are live |
-| Monitoring | Add CloudWatch logs, metrics, and alarms |
+| AWS | Add a custom domain, stricter CORS origin, and production-grade API throttling |
+| CI/CD | Add deployment checks against the live AWS backend and dashboard |
+| Monitoring | Add CloudWatch metrics, alarms, and structured alerting |
 | Security | Add rate limiting, stricter CORS, request size limits, and safer logging |
 | ML | Optionally retrain on the full PhiUSIIL dataset or additional live phishing feeds |
 | Product | Add scan history, downloadable reports, and richer dashboard analytics |
