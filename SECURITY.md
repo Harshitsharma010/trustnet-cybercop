@@ -52,6 +52,7 @@ The deployed AWS design intentionally uses a small service surface:
 - CloudWatch Logs provides execution visibility.
 - CloudWatch log retention is set to 1 week to reduce long-term log storage.
 - AWS Amplify hosts the static React dashboard.
+- GitHub Actions deployment uses OIDC to assume an AWS role instead of storing long-term AWS access keys.
 
 Recommended IAM posture:
 

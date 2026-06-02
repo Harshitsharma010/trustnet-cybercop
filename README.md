@@ -127,6 +127,7 @@ This project is relevant for cloud, cybersecurity, AI/ML, and full-stack interns
 | Frontend Dashboard | React, Vite, TypeScript |
 | Browser Extension | Chrome Manifest V3, JavaScript, HTML, CSS |
 | Containerization | Docker |
+| CI/CD | GitHub Actions for CI and OIDC-based Lambda image deployment |
 | Cloud Deployment | AWS Lambda container + API Gateway, AWS Amplify Hosting, optional AWS App Runner |
 | Configuration | `apprunner.yaml`, `amplify.yml`, environment variables |
 
@@ -165,6 +166,31 @@ Dashboard or Extension UI
 The backend was containerized with Docker and pushed to Amazon ECR as a Lambda container image. AWS Lambda runs the ML inference backend, while API Gateway HTTP API exposes the public routes used by the dashboard, API clients, and extension.
 
 The React dashboard is deployed on AWS Amplify and uses `VITE_API_BASE_URL` to call the API Gateway backend. CloudWatch Logs are enabled for Lambda execution visibility, with log retention set to 1 week for cost control. The Chrome extension has also been updated to use the deployed API Gateway backend instead of localhost.
+
+## CI/CD Deployment Workflow
+
+The repository includes a GitHub Actions deploy workflow at `.github/workflows/deploy-lambda.yml`. It uses GitHub OIDC to assume an AWS IAM role instead of storing long-term AWS access keys.
+
+Manual deploy flow:
+
+```text
+Run backend tests
+  -> Build Lambda Docker image
+  -> Push image to Amazon ECR
+  -> Update AWS Lambda function image
+  -> Wait for Lambda update
+  -> Smoke test /health
+```
+
+Required GitHub repository variables:
+
+| Variable | Purpose |
+| --- | --- |
+| `AWS_ROLE_TO_ASSUME` | IAM role trusted by GitHub Actions OIDC |
+| `AWS_REGION` | AWS Region, defaults to `ap-south-1` if unset |
+| `ECR_REPOSITORY` | ECR repository name for the Lambda image |
+| `LAMBDA_FUNCTION_NAME` | Lambda function to update |
+| `API_BASE_URL` | Deployed API base URL for the smoke test |
 
 ## AWS Free Tier Deployment
 
@@ -554,6 +580,8 @@ ALLOWED_ORIGINS=https://your-amplify-app-url.amplifyapp.com
 
 ```text
 trustnet-cybercop/
+|-- .github/
+|   `-- workflows/
 |-- backend/
 |   |-- api.py
 |   |-- detector.py
@@ -696,16 +724,21 @@ This is a portfolio and security education project, not a production-grade phish
 - The Chrome extension flow is designed for demonstration and testing.
 - The AWS deployment is configured for portfolio demonstration; production usage would need stronger abuse protection and monitoring.
 
-## Resume-Ready Summary
+## Resume-Ready Bullets
 
-- Deployed TrustNet CyberCop, an ML-powered phishing URL detection platform, on AWS using Lambda container images, API Gateway HTTP API, Amazon ECR, AWS Amplify, CloudWatch Logs, and Chrome extension integration with a Free Tier-conscious serverless architecture.
+- Deployed serverless ML inference API on AWS Lambda (container image) backed by API Gateway HTTP API, serving live phishing predictions with sub-200ms warm response times.
+- Containerized Python/Flask backend with Docker, stored image in Amazon ECR, and configured Lambda memory and timeout for Free Tier ML inference.
+- Hosted React + TypeScript dashboard on AWS Amplify with automated build pipeline via `amplify.yml`; restricted CloudWatch log retention to 1 week for cost control.
+- Built Chrome Extension (Manifest V3) wired to production API Gateway endpoint for real-time URL scanning with omnibox workflow and sandbox page isolation.
+- Configured API Gateway throttling (rate: 10, burst: 20) and CloudWatch alarm for Lambda error detection, demonstrating cost-aware and observable cloud architecture.
+- Added GitHub Actions Lambda deploy workflow using OIDC to build the backend image, push to ECR, update Lambda, and smoke test `/health` without long-term AWS access keys.
 
 ## Future Improvements
 
 | Area | Improvement |
 | --- | --- |
 | AWS | Add a custom domain, stricter CORS origin, and route-specific throttling policies |
-| CI/CD | Add deployment checks against the live AWS backend and dashboard |
+| CI/CD | Add deploy workflow screenshots after the OIDC workflow is configured and run |
 | Monitoring | Add CloudWatch metrics, alarms, and structured alerting |
 | Security | Add rate limiting, stricter CORS, request size limits, and safer logging |
 | ML | Optionally retrain on the full PhiUSIIL dataset or additional live phishing feeds |
