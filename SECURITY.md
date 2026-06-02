@@ -12,6 +12,7 @@ TrustNet CyberCop is a portfolio and security education project. It demonstrates
 | Container artifact | Lambda image is stored in Amazon ECR. |
 | Monitoring | CloudWatch Logs captures Lambda execution logs. |
 | Log retention | CloudWatch log retention is set to 1 week. |
+| API abuse control | API Gateway throttling is configured with rate limit 10 and burst limit 20. |
 | Cost control | Backend compute is request-based through Lambda instead of always-on EC2/App Runner. |
 | Browser workflow | Chrome extension calls the deployed API Gateway backend. |
 | Fast scan safety | Default `/predict` path does not fetch remote webpages. |
@@ -46,6 +47,7 @@ The deployed AWS design intentionally uses a small service surface:
 
 - AWS Lambda runs the ML inference container on demand.
 - API Gateway HTTP API exposes only the required public routes.
+- API Gateway throttling is configured with rate limit 10 and burst limit 20 to reduce abuse risk and protect Free Tier usage.
 - Amazon ECR stores the backend image used by Lambda.
 - CloudWatch Logs provides execution visibility.
 - CloudWatch log retention is set to 1 week to reduce long-term log storage.
@@ -93,7 +95,6 @@ These improvements are realistic to add without turning the project into a large
 
 | Priority | Improvement | Why it helps | Free Tier fit |
 | --- | --- | --- | --- |
-| P0 | Add API Gateway route throttling | Reduces accidental abuse and protects Lambda cost | Strong |
 | P0 | Set `ALLOWED_ORIGINS` to the Amplify domain | Restricts browser CORS access to the deployed dashboard | Strong |
 | P0 | Document Lambda IAM execution role permissions | Shows least-privilege cloud-security thinking | Strong |
 | P1 | Add CloudWatch alarm for Lambda errors | Shows monitoring and incident awareness | Good |
@@ -122,7 +123,7 @@ Use these points when explaining the project:
 - "I deployed the model as a Lambda container image stored in ECR."
 - "I kept default scans URL-only to reduce latency, cost, and SSRF risk."
 - "I configured CloudWatch Logs and limited retention to 1 week."
-- "The next security hardening steps would be API Gateway throttling, stricter CORS, IAM role documentation, and CloudWatch alarms."
+- "The next security hardening steps would be stricter CORS, route-specific throttling policies, IAM role documentation, and CloudWatch alarm tuning."
 
 ## Responsible Use
 

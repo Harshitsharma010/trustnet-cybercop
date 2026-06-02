@@ -13,6 +13,7 @@ TrustNet CyberCop is deployed as a Free Tier-conscious AWS portfolio project. Th
 | Image storage | Amazon ECR | Stores the Lambda container image. |
 | Model inference | scikit-learn model artifact | Loads `model.pkl` and scores extracted URL features. |
 | Observability | CloudWatch Logs and alarms | Captures Lambda logs and monitors runtime health. |
+| Abuse control | API Gateway throttling | Limits request bursts to protect Free Tier usage. |
 
 ## Request Flow
 
@@ -71,6 +72,7 @@ Current AWS proof includes:
 - ECR image storage for the Lambda container.
 - Lambda function configuration.
 - API Gateway routes and invoke URL.
+- API Gateway throttling proof.
 - CloudWatch log events.
 - CloudWatch log retention set to 1 week.
 - CloudWatch alarm proof for Lambda monitoring.
@@ -82,7 +84,7 @@ Recommended next hardening steps:
 
 - Keep Lambda IAM permissions least-privilege.
 - Keep CORS restricted to the Amplify dashboard domain for browser clients.
-- Use API Gateway throttling to reduce accidental abuse and cost spikes.
+- Keep API Gateway throttling enabled to reduce accidental abuse and cost spikes.
 - Keep CloudWatch alarms for Lambda errors, throttles, and high duration.
 
 ## Free Tier Design Choices

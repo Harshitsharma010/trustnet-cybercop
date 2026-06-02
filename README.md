@@ -612,6 +612,8 @@ The repository includes local proof assets and AWS deployment evidence for the u
 
 ![API Gateway invoke URL](screenshots/aws/api-gateway-invoke-url.png)
 
+![API Gateway throttling](screenshots/aws/api-gateway-throttling.png)
+
 ### CloudWatch Logs
 
 ![CloudWatch log group retention](screenshots/aws/cloudwatch-log-group-retention.png)
@@ -619,8 +621,6 @@ The repository includes local proof assets and AWS deployment evidence for the u
 ![CloudWatch log events](screenshots/aws/cloudwatch-log-events.png)
 
 ![CloudWatch alarm overview](screenshots/aws/cloudwatch-alarm-overview.png)
-
-![CloudWatch Lambda error alarm](screenshots/aws/cloudwatch-lambda-error-alarm.png)
 
 ### AWS Amplify
 
@@ -666,6 +666,7 @@ The Flask/Lambda API reports the upgraded model version, feature count, and Free
 - Used Lambda + API Gateway instead of always-on EC2/App Runner for the primary deployed backend.
 - Kept ML inference request-based, so compute runs only when the API is called.
 - Lambda memory and timeout were tuned to support the ML model load while keeping compute request-based.
+- API Gateway throttling is configured with rate limit 10 and burst limit 20 to reduce abuse risk and protect Free Tier usage.
 - Set CloudWatch log retention to 1 week to avoid unlimited log growth.
 - Avoided RDS, NAT Gateway, SageMaker, Bedrock, and always-on infrastructure for this portfolio deployment.
 
@@ -702,7 +703,7 @@ This is a portfolio and security education project, not a production-grade phish
 
 | Area | Improvement |
 | --- | --- |
-| AWS | Add a custom domain, stricter CORS origin, and production-grade API throttling |
+| AWS | Add a custom domain, stricter CORS origin, and route-specific throttling policies |
 | CI/CD | Add deployment checks against the live AWS backend and dashboard |
 | Monitoring | Add CloudWatch metrics, alarms, and structured alerting |
 | Security | Add rate limiting, stricter CORS, request size limits, and safer logging |
