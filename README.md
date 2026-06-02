@@ -667,6 +667,7 @@ The Flask/Lambda API reports the upgraded model version, feature count, and Free
 - Kept ML inference request-based, so compute runs only when the API is called.
 - Lambda memory and timeout were tuned to support the ML model load while keeping compute request-based.
 - API Gateway throttling is configured with rate limit 10 and burst limit 20 to reduce abuse risk and protect Free Tier usage.
+- CloudWatch alarm is configured for Lambda errors to detect backend failures.
 - Set CloudWatch log retention to 1 week to avoid unlimited log growth.
 - Avoided RDS, NAT Gateway, SageMaker, Bedrock, and always-on infrastructure for this portfolio deployment.
 
