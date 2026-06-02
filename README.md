@@ -561,6 +561,7 @@ trustnet-cybercop/
 |-- amplify.yml
 |-- AWS_DEPLOYMENT.md
 |-- AWS_FREE_TIER.md
+|-- ARCHITECTURE.md
 |-- DATASET.md
 |-- MODEL_CARD.md
 |-- SECURITY.md
@@ -583,6 +584,8 @@ The repository includes local proof assets and AWS deployment evidence for the u
 
 ![Lambda function overview](screenshots/aws/lambda-function-overview.png)
 
+![Lambda IAM role permissions](screenshots/aws/lambda-iam-role-permissions.png)
+
 ### API Gateway
 
 ![API Gateway routes](screenshots/aws/api-gateway-routes.png)
@@ -594,6 +597,10 @@ The repository includes local proof assets and AWS deployment evidence for the u
 ![CloudWatch log group retention](screenshots/aws/cloudwatch-log-group-retention.png)
 
 ![CloudWatch log events](screenshots/aws/cloudwatch-log-events.png)
+
+![CloudWatch alarm overview](screenshots/aws/cloudwatch-alarm-overview.png)
+
+![CloudWatch Lambda error alarm](screenshots/aws/cloudwatch-lambda-error-alarm.png)
 
 ### AWS Amplify
 
@@ -614,6 +621,7 @@ The repository includes local proof assets and AWS deployment evidence for the u
 | Prediction API | Verified | `backend/tests/test_detector_api.py` covers safe and dangerous URL predictions |
 | Model metrics | Included | UCI-trained metrics in `backend/model_metrics.json` and [MODEL_CARD.md](MODEL_CARD.md) |
 | AWS Free Tier path | Deployed | [AWS_FREE_TIER.md](AWS_FREE_TIER.md), `backend/lambda_handler.py`, `backend/Dockerfile.lambda`, and [AWS screenshots](screenshots/aws/) |
+| Architecture documentation | Included | [ARCHITECTURE.md](ARCHITECTURE.md) explains request flow, AWS services, security boundaries, and cost controls |
 | React production build | Verified | `npm run build` passes for the Vite dashboard |
 | Backend tests | Verified | `python -m unittest discover -s backend/tests` passes |
 | Chrome extension workflow | Deployed API target | Canonical Manifest V3 extension in `extension/fixed_extension/` and [live extension proof](screenshots/aws/chrome-extension-live.png) |
@@ -652,6 +660,7 @@ The Flask/Lambda API reports the upgraded model version, feature count, and Free
 - The project should not be used as the only defense against phishing.
 - For real deployment, add API rate limiting, stricter CORS, request logging controls, abuse protection, and monitoring.
 - See [SECURITY.md](SECURITY.md) for the security posture, threat boundaries, and Free Tier-safe hardening backlog.
+- See [ARCHITECTURE.md](ARCHITECTURE.md) for the deployed AWS request flow, runtime choices, and cost-control design.
 
 ## Known Limitations
 
