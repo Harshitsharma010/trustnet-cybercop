@@ -574,10 +574,6 @@ The repository includes local proof assets and AWS deployment evidence for the u
 
 ![TrustNet CyberCop dashboard showing the URL scanner, risk panel, session stats, and model evidence section](docs/screenshots/dashboard.png)
 
-### Live AWS Dashboard
-
-![TrustNet CyberCop dashboard deployed on AWS Amplify and connected to the API Gateway backend](screenshots/aws/amplify-dashboard-live.png)
-
 ### Amazon ECR
 
 ![ECR image pushed](screenshots/aws/01-ecr-image-latest.png)
