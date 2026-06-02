@@ -25,10 +25,20 @@ export type BackendPrediction = {
   model_version?: string | null;
   model_profile?: string | null;
   scan_mode?: string | null;
+  deep_scan?: DeepScanResult | null;
   feature_count?: number | string | null;
   reasons?: RiskReason[];
   response_time_ms?: number | string | null;
   [key: string]: unknown;
+};
+
+export type DeepScanResult = {
+  status?: string;
+  reason?: string;
+  final_url?: string;
+  http_status?: number | string | null;
+  score_adjustment?: number | string | null;
+  signals?: RiskReason[];
 };
 
 export type RiskReason = {
@@ -52,6 +62,7 @@ export type ScanResult = {
   modelVersion?: string;
   modelProfile?: string;
   scanMode?: string;
+  deepScan?: DeepScanResult | null;
   featureCount?: number | null;
   reasons: RiskReason[];
   responseTimeMs: number | null;

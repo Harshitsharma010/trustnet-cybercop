@@ -691,6 +691,7 @@ h1 {
 }
 
 .final-url,
+.deep-scan-panel,
 .reason-panel {
   margin-top: 12px;
   border: 1px solid rgba(148, 163, 184, 0.16);
@@ -716,6 +717,40 @@ h1 {
 .final-url code {
   color: #c4f1ff;
   overflow-wrap: anywhere;
+}
+
+.deep-scan-panel dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 12px 0 0;
+}
+
+.deep-scan-panel dl div {
+  min-width: 0;
+  border-radius: 6px;
+  padding: 9px 10px;
+  background: rgba(15, 23, 42, 0.56);
+}
+
+.deep-scan-panel dt {
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.deep-scan-panel dd {
+  margin: 0;
+  color: #e6edf7;
+}
+
+.deep-scan-panel p {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
 }
 
 .reason-heading {

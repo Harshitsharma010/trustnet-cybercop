@@ -17,12 +17,18 @@ function formatScore(value: number | null | undefined) {
   return typeof value === "number" ? `${value}%` : "--";
 }
 
+function formatDeepStatus(value: string | undefined) {
+  return value ? value.replace(/_/g, " ") : "Not reported";
+}
+
 export function ResultCard({ result, loading, healthState }: ResultCardProps) {
   const tone = getRiskTone(result?.status);
   const score = result?.riskScore ?? 0;
   const ringStyle = { "--risk": score } as CSSProperties;
   const statusLabel = result?.status ?? (healthState === "offline" ? "Demo state" : "Ready");
   const reasons = result?.reasons ?? [];
+  const deepScan = result?.scanMode === "deep" ? result.deepScan : null;
+  const deepSignals = Array.isArray(deepScan?.signals) ? deepScan.signals.length : 0;
 
   return (
     <section className={`result-card ${tone} ${loading ? "loading" : ""}`} aria-live="polite">
@@ -101,6 +107,30 @@ export function ResultCard({ result, loading, healthState }: ResultCardProps) {
         <div className="final-url">
           <span>Final URL</span>
           <code>{result.finalUrl}</code>
+        </div>
+      )}
+
+      {deepScan && (
+        <div className="deep-scan-panel">
+          <div className="reason-heading">
+            <span>Deep inspection</span>
+            <strong>{formatDeepStatus(deepScan.status)}</strong>
+          </div>
+          <dl>
+            <div>
+              <dt>HTTP status</dt>
+              <dd>{deepScan.http_status ?? "Not reported"}</dd>
+            </div>
+            <div>
+              <dt>Extra signals</dt>
+              <dd>{deepSignals}</dd>
+            </div>
+            <div>
+              <dt>Score adjustment</dt>
+              <dd>{deepScan.score_adjustment ?? 0}</dd>
+            </div>
+          </dl>
+          {deepScan.reason && <p>{deepScan.reason}</p>}
         </div>
       )}
 

@@ -136,6 +136,7 @@ export function createScanResult(payload: BackendPrediction, submittedUrl: strin
     modelVersion: typeof payload.model_version === "string" ? payload.model_version : undefined,
     modelProfile: typeof payload.model_profile === "string" ? payload.model_profile : undefined,
     scanMode: typeof payload.scan_mode === "string" ? payload.scan_mode : undefined,
+    deepScan: payload.deep_scan && typeof payload.deep_scan === "object" ? payload.deep_scan : null,
     featureCount: Number.isFinite(featureCount) ? featureCount : null,
     reasons: Array.isArray(payload.reasons) ? payload.reasons : [],
     responseTimeMs,
