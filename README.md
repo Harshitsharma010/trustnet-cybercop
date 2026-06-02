@@ -172,7 +172,7 @@ AWS Amplify Hosting
 TrustNet Dashboard
 ```
 
-**Backend plan, recommended for Free Tier**
+**Backend deployment path used for Free Tier**
 
 - Train locally and deploy only the saved model artifact.
 - Package the backend with `backend/Dockerfile.lambda`.
@@ -197,7 +197,7 @@ App Runner is simpler for Flask/Gunicorn demos, but it can create always-on char
 gunicorn --chdir backend -w 2 -b 0.0.0.0:5000 api:app
 ```
 
-**Frontend plan**
+**Frontend deployment path used**
 
 - Deploy the React dashboard to **AWS Amplify Hosting**.
 - Use `dashboard` as the app root.
@@ -640,6 +640,7 @@ The Flask/Lambda API reports the upgraded model version, feature count, and Free
 
 - Used Lambda + API Gateway instead of always-on EC2/App Runner for the primary deployed backend.
 - Kept ML inference request-based, so compute runs only when the API is called.
+- Lambda memory and timeout were tuned to support the ML model load while keeping compute request-based.
 - Set CloudWatch log retention to 1 week to avoid unlimited log growth.
 - Avoided RDS, NAT Gateway, SageMaker, Bedrock, and always-on infrastructure for this portfolio deployment.
 
@@ -661,6 +662,7 @@ This is a portfolio and security education project, not a production-grade phish
 - The checked-in model is trained on a balanced 60,000-row sample from UCI PhiUSIIL; use `--max-samples 0` or `--dataset-csv` for larger retraining runs.
 - The model primarily uses URL-derived features and does not inspect webpage content by default.
 - Deep scan is optional to reduce cost and latency.
+- First request after inactivity may take longer because AWS Lambda container cold starts can occur.
 - Public API Gateway URL is used for demo purposes.
 - The Chrome extension flow is designed for demonstration and testing.
 - The AWS deployment is configured for portfolio demonstration; production usage would need stronger abuse protection and monitoring.
