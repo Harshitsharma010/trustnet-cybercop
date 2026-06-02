@@ -1,4 +1,8 @@
-const DEFAULT_API_BASE_URL = "http://127.0.0.1:5000";
+const DEFAULT_API_BASE_URL = "https://uen2ef1nt3.execute-api.ap-south-1.amazonaws.com";
+const LOCAL_API_BASE_URLS = new Set([
+  "http://127.0.0.1:5000",
+  "http://localhost:5000"
+]);
 let latestScanData = null;
 
 console.log("TrustNet CyberCop installed successfully");
@@ -28,7 +32,15 @@ chrome.omnibox.onInputEntered.addListener((text) => {
 function getApiBaseUrl(callback) {
   chrome.storage.sync.get(
     { apiBaseUrl: DEFAULT_API_BASE_URL },
-    ({ apiBaseUrl }) => callback(String(apiBaseUrl).replace(/\/$/, "")),
+    ({ apiBaseUrl }) => {
+      const normalized = String(apiBaseUrl).replace(/\/$/, "");
+      if (LOCAL_API_BASE_URLS.has(normalized)) {
+        chrome.storage.sync.set({ apiBaseUrl: DEFAULT_API_BASE_URL });
+        callback(DEFAULT_API_BASE_URL);
+        return;
+      }
+      callback(normalized);
+    },
   );
 }
 
