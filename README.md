@@ -91,6 +91,20 @@ Risk Response
 Dashboard or Extension UI
 ```
 
+## Live Deployment
+
+- **Live Dashboard:** https://main.dqqhdlk8jbmoh.amplifyapp.com
+- **Backend API:** https://uen2ef1nt3.execute-api.ap-south-1.amazonaws.com
+
+The React dashboard is hosted on AWS Amplify and connected to the AWS Lambda backend through API Gateway.
+
+### Verified API Endpoints
+
+- `GET /health`
+- `POST /predict`
+- `GET /model/info`
+- `GET /model/metrics`
+
 ## AWS Free Tier Deployment
 
 ```text
@@ -348,6 +362,12 @@ Extension capabilities in this repository:
 
 ```text
 https://uen2ef1nt3.execute-api.ap-south-1.amazonaws.com/predict
+```
+
+To use the unpacked Chrome extension from the address bar, type `sandbox` first, press Space or Tab, then enter the URL to scan. Example:
+
+```text
+sandbox secure-login.verify-account.com/update/password
 ```
 
 ## Local Development Setup
