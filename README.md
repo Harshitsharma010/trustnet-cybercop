@@ -9,6 +9,55 @@ TrustNet CyberCop is a cybersecurity project that analyzes suspicious URLs befor
 > **Project status**  
 > Built as a portfolio and hackathon-origin project. The repository includes working application code, a trained local model artifact, model metrics, Docker/Gunicorn setup, Lambda container support, AWS deployment evidence, and a Chrome extension wired to the deployed API. It is not presented as a production security product.
 
+## Live AWS Deployment
+
+- **Live Dashboard:** https://main.dqqhdlk8jbmoh.amplifyapp.com
+- **Backend API:** https://uen2ef1nt3.execute-api.ap-south-1.amazonaws.com
+
+The React dashboard is hosted on AWS Amplify and connected to the AWS Lambda backend through API Gateway.
+
+### Verified API Endpoints
+
+- `GET /health`
+- `POST /predict`
+- `GET /model/info`
+- `GET /model/metrics`
+
+Cloud deployment completed and verified using AWS Lambda, API Gateway, ECR, Amplify, CloudWatch, and Chrome extension integration.
+
+## AWS Services Used
+
+| Layer | AWS Service | Purpose |
+| --- | --- | --- |
+| Container Registry | Amazon ECR | Stores the Lambda backend image |
+| Backend Runtime | AWS Lambda | Runs the ML inference API |
+| API Layer | API Gateway HTTP API | Exposes public API routes |
+| Frontend Hosting | AWS Amplify | Hosts the React dashboard |
+| Monitoring | CloudWatch Logs | Captures Lambda execution logs |
+| Cost Control | CloudWatch log retention | Limits logs to 1 week |
+| Browser Workflow | Chrome Extension | Connects extension workflow to deployed AWS API |
+
+## Deployed AWS Architecture
+
+```text
+User / Chrome Extension / React Dashboard
+|
+v
+AWS Amplify Hosted Dashboard
+|
+v
+API Gateway HTTP API
+|
+v
+AWS Lambda Container
+|
+v
+TrustNet ML Model + 47 URL Features
+|
+v
+CloudWatch Logs
+```
+
 ## 2026 Upgrade Highlights
 
 | Upgrade | What changed |
@@ -91,19 +140,11 @@ Risk Response
 Dashboard or Extension UI
 ```
 
-## Live Deployment
+## Deployment Summary
 
-- **Live Dashboard:** https://main.dqqhdlk8jbmoh.amplifyapp.com
-- **Backend API:** https://uen2ef1nt3.execute-api.ap-south-1.amazonaws.com
+The backend was containerized with Docker and pushed to Amazon ECR as a Lambda container image. AWS Lambda runs the ML inference backend, while API Gateway HTTP API exposes the public routes used by the dashboard, API clients, and extension.
 
-The React dashboard is hosted on AWS Amplify and connected to the AWS Lambda backend through API Gateway.
-
-### Verified API Endpoints
-
-- `GET /health`
-- `POST /predict`
-- `GET /model/info`
-- `GET /model/metrics`
+The React dashboard is deployed on AWS Amplify and uses `VITE_API_BASE_URL` to call the API Gateway backend. CloudWatch Logs are enabled for Lambda execution visibility, with log retention set to 1 week for cost control. The Chrome extension has also been updated to use the deployed API Gateway backend instead of localhost.
 
 ## AWS Free Tier Deployment
 
@@ -525,7 +566,7 @@ trustnet-cybercop/
 `-- README.md
 ```
 
-## Screenshots / Demo Proof
+## AWS Deployment Proof
 
 The repository includes local proof assets and AWS deployment evidence for the upgraded dashboard, Lambda/API Gateway backend, Amplify hosting, CloudWatch logs, and Chrome extension flow.
 
@@ -537,19 +578,35 @@ The repository includes local proof assets and AWS deployment evidence for the u
 
 ![TrustNet CyberCop dashboard deployed on AWS Amplify and connected to the API Gateway backend](screenshots/aws/amplify-dashboard-live.png)
 
-### AWS Deployment Evidence
+### Amazon ECR
 
-| Evidence | Screenshot |
-| --- | --- |
-| ECR Lambda container image | [ECR latest image](screenshots/aws/01-ecr-image-latest.png) |
-| Lambda function configured from container image | [Lambda function overview](screenshots/aws/lambda-function-overview.png) |
-| API Gateway routes for `/health`, `/predict`, `/analyze`, and model metadata | [API Gateway routes](screenshots/aws/api-gateway-routes.png) |
-| API Gateway invoke URL | [API Gateway invoke URL](screenshots/aws/api-gateway-invoke-url.png) |
-| Amplify deployment completed successfully | [Amplify deployment success](screenshots/aws/amplify-deployment-success.png) |
-| Amplify-hosted dashboard calling the deployed API | [Amplify live dashboard](screenshots/aws/amplify-dashboard-live.png) |
-| CloudWatch logging and retention configured | [CloudWatch retention](screenshots/aws/cloudwatch-log-group-retention.png) |
-| Lambda/API runtime log events | [CloudWatch log events](screenshots/aws/cloudwatch-log-events.png) |
-| Chrome extension live scan using the deployed backend | [Chrome extension live scan](screenshots/aws/chrome-extension-live.png) |
+![ECR image pushed](screenshots/aws/01-ecr-image-latest.png)
+
+### AWS Lambda
+
+![Lambda function overview](screenshots/aws/lambda-function-overview.png)
+
+### API Gateway
+
+![API Gateway routes](screenshots/aws/api-gateway-routes.png)
+
+![API Gateway invoke URL](screenshots/aws/api-gateway-invoke-url.png)
+
+### CloudWatch Logs
+
+![CloudWatch log group retention](screenshots/aws/cloudwatch-log-group-retention.png)
+
+![CloudWatch log events](screenshots/aws/cloudwatch-log-events.png)
+
+### AWS Amplify
+
+![Amplify deployment success](screenshots/aws/amplify-deployment-success.png)
+
+![Amplify dashboard live](screenshots/aws/amplify-dashboard-live.png)
+
+### Chrome Extension
+
+![Chrome extension connected to AWS API](screenshots/aws/chrome-extension-live.png)
 
 ### Proof Matrix
 
@@ -579,6 +636,13 @@ The Flask/Lambda API reports the upgraded model version, feature count, and Free
 }
 ```
 
+## Free Tier and Cost-Control Notes
+
+- Used Lambda + API Gateway instead of always-on EC2/App Runner for the primary deployed backend.
+- Kept ML inference request-based, so compute runs only when the API is called.
+- Set CloudWatch log retention to 1 week to avoid unlimited log growth.
+- Avoided RDS, NAT Gateway, SageMaker, Bedrock, and always-on infrastructure for this portfolio deployment.
+
 ## Security Considerations
 
 - The API validates missing, empty, overly long, and non-HTTP/HTTPS URL inputs.
@@ -590,15 +654,20 @@ The Flask/Lambda API reports the upgraded model version, feature count, and Free
 - The project should not be used as the only defense against phishing.
 - For real deployment, add API rate limiting, stricter CORS, request logging controls, abuse protection, and monitoring.
 
-## Limitations
+## Known Limitations
 
-This project is intentionally scoped as a portfolio and learning project. The current implementation demonstrates the end-to-end workflow, but production usage would require additional safeguards:
+This is a portfolio and security education project, not a production-grade phishing protection service. The current implementation demonstrates the end-to-end workflow, but production usage would require additional safeguards:
 
 - The checked-in model is trained on a balanced 60,000-row sample from UCI PhiUSIIL; use `--max-samples 0` or `--dataset-csv` for larger retraining runs.
-- URL-only detection cannot catch every phishing attack.
-- Domain reputation, WHOIS, DNS, screenshot, and page-content analysis are intentionally not included in fast mode to keep AWS costs low.
+- The model primarily uses URL-derived features and does not inspect webpage content by default.
+- Deep scan is optional to reduce cost and latency.
+- Public API Gateway URL is used for demo purposes.
 - The Chrome extension flow is designed for demonstration and testing.
 - The AWS deployment is configured for portfolio demonstration; production usage would need stronger abuse protection and monitoring.
+
+## Resume-Ready Summary
+
+- Deployed TrustNet CyberCop, an ML-powered phishing URL detection platform, on AWS using Lambda container images, API Gateway HTTP API, Amazon ECR, AWS Amplify, CloudWatch Logs, and Chrome extension integration with a Free Tier-conscious serverless architecture.
 
 ## Future Improvements
 
