@@ -563,6 +563,7 @@ trustnet-cybercop/
 |-- AWS_FREE_TIER.md
 |-- DATASET.md
 |-- MODEL_CARD.md
+|-- SECURITY.md
 `-- README.md
 ```
 
@@ -650,6 +651,7 @@ The Flask/Lambda API reports the upgraded model version, feature count, and Free
 - Fast scans do not perform external network fetches by default.
 - The project should not be used as the only defense against phishing.
 - For real deployment, add API rate limiting, stricter CORS, request logging controls, abuse protection, and monitoring.
+- See [SECURITY.md](SECURITY.md) for the security posture, threat boundaries, and Free Tier-safe hardening backlog.
 
 ## Known Limitations
 
