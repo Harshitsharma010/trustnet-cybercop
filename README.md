@@ -29,6 +29,16 @@ TrustNet CyberCop is a cybersecurity project that analyzes suspicious URLs befor
 | Security posture | URL validation, SSRF-aware deep scan, IAM proof, and [SECURITY.md](SECURITY.md) |
 | Documentation | [ARCHITECTURE.md](ARCHITECTURE.md), [MODEL_CARD.md](MODEL_CARD.md), AWS screenshots, and Free Tier notes |
 
+## Remote Reviewer Snapshot
+
+| Question | Answer |
+| --- | --- |
+| What is the product? | A phishing URL intelligence platform with API, dashboard, and Chrome extension workflow |
+| What cloud pattern does it show? | Serverless ML inference with Lambda container, API Gateway, ECR, Amplify, and CloudWatch |
+| What security problem does it address? | Suspicious URL analysis before a user opens a link |
+| What makes it more than a demo? | Model metrics, architecture docs, deployment proof, security notes, and cost-control documentation |
+| What is the main tradeoff? | It is a portfolio/security education tool, not a production phishing protection service |
+
 ## Live AWS Deployment
 
 - **Live Dashboard:** https://main.dqqhdlk8jbmoh.amplifyapp.com
@@ -56,6 +66,18 @@ Cloud deployment completed and verified using AWS Lambda, API Gateway, ECR, Ampl
 | Monitoring | CloudWatch Logs | Captures Lambda execution logs |
 | Cost Control | CloudWatch log retention | Limits logs to 1 week |
 | Browser Workflow | Chrome Extension | Connects extension workflow to deployed AWS API |
+
+## Architecture Decisions
+
+| Decision | Why It Helps |
+| --- | --- |
+| Lambda container instead of always-on server | Keeps the ML API request-based and Free Tier-conscious |
+| API Gateway in front of Lambda | Provides a clean public HTTP API boundary |
+| ECR for backend image | Demonstrates container packaging and AWS image registry workflow |
+| Amplify for dashboard | Keeps frontend hosting simple and connected to GitHub |
+| CloudWatch logs and alarms | Adds observability and failure visibility |
+| Fast scan by default | Avoids unnecessary outbound fetches, latency, and cost |
+| Deep scan as opt-in | Allows redirect inspection while keeping safer defaults |
 
 ## Deployed AWS Architecture
 
