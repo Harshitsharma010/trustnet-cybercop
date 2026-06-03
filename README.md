@@ -39,6 +39,19 @@ TrustNet CyberCop is a cybersecurity project that analyzes suspicious URLs befor
 | What makes it more than a demo? | Model metrics, architecture docs, deployment proof, security notes, and cost-control documentation |
 | What is the main tradeoff? | It is a portfolio/security education tool, not a production phishing protection service |
 
+## Reviewer Documentation
+
+| Document | Purpose |
+| --- | --- |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Full architecture and request flow |
+| [`MODEL_CARD.md`](MODEL_CARD.md) | Model data, metrics, limits, and intended use |
+| [`SECURITY.md`](SECURITY.md) | Threat boundaries, SSRF notes, and hardening backlog |
+| [`AWS_FREE_TIER.md`](AWS_FREE_TIER.md) | Free Tier-conscious deployment and cost controls |
+| [`docs/cloud-architecture-review.md`](docs/cloud-architecture-review.md) | Remote-review summary of the AWS architecture |
+| [`docs/security-review.md`](docs/security-review.md) | Security review of API, extension, model, and cloud boundaries |
+| [`docs/interview-questions.md`](docs/interview-questions.md) | Interview-ready questions and answers |
+| [`docs/github-repo-settings.md`](docs/github-repo-settings.md) | Suggested GitHub description, topics, and issue backlog |
+
 ## Live AWS Deployment
 
 - **Live Dashboard:** https://main.dqqhdlk8jbmoh.amplifyapp.com
