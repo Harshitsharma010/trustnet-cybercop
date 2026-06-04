@@ -52,6 +52,8 @@ TrustNet CyberCop is a cybersecurity project that analyzes suspicious URLs befor
 | [`docs/interview-questions.md`](docs/interview-questions.md) | Interview-ready questions and answers |
 | [`docs/github-repo-settings.md`](docs/github-repo-settings.md) | Suggested GitHub description, topics, and issue backlog |
 
+Dependabot is configured to monitor backend Python dependencies, dashboard npm dependencies, backend Docker image updates, and GitHub Actions updates.
+
 ## Live AWS Deployment
 
 - **Live Dashboard:** https://main.dqqhdlk8jbmoh.amplifyapp.com
