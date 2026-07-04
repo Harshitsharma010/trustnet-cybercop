@@ -56,7 +56,7 @@ function fallbackStatus(rawStatus: unknown, prediction: unknown): RiskStatus {
   const normalizedStatus = typeof rawStatus === "string" ? rawStatus.toLowerCase() : "";
 
   if (normalizedStatus.includes("phish") || normalizedStatus.includes("danger") || normalizedStatus.includes("malicious")) {
-    return "Phishing";
+    return "Dangerous";
   }
 
   if (normalizedStatus.includes("suspicious") || normalizedStatus.includes("warning")) {
@@ -67,7 +67,7 @@ function fallbackStatus(rawStatus: unknown, prediction: unknown): RiskStatus {
     return "Safe";
   }
 
-  return Number(prediction) === 1 ? "Phishing" : "Safe";
+  return Number(prediction) === 1 ? "Dangerous" : "Safe";
 }
 
 export function statusFromRisk(score: number | null, rawStatus?: unknown, prediction?: unknown): RiskStatus {
@@ -83,7 +83,7 @@ export function statusFromRisk(score: number | null, rawStatus?: unknown, predic
     return "Suspicious";
   }
 
-  return "Phishing";
+  return "Dangerous";
 }
 
 export function getRiskTone(status?: RiskStatus): RiskTone {
@@ -95,7 +95,7 @@ export function getRiskTone(status?: RiskStatus): RiskTone {
     return "warning";
   }
 
-  if (status === "Phishing") {
+  if (status === "Dangerous") {
     return "danger";
   }
 
@@ -107,7 +107,7 @@ export function getRecommendation(status?: RiskStatus) {
     return "No strong phishing indicators detected. Still verify the domain manually.";
   }
 
-  if (status === "Suspicious" || status === "Phishing") {
+  if (status === "Suspicious" || status === "Dangerous") {
     return "Avoid entering credentials or payment details. Verify the source before proceeding.";
   }
 

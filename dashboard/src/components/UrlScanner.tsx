@@ -2,7 +2,11 @@ import type { FormEvent } from "react";
 import type { HealthState } from "../types";
 import { Icon } from "./Icon";
 
-const QUICK_SCAN_URLS = ["https://github.com", "http://secure-login.verify-account.com/update/password", "https://paypal-security-login.xyz/verify"];
+const QUICK_SCAN_URLS = [
+  { label: "GitHub safe example", url: "https://github.com" },
+  { label: "PayPal fake login", url: "https://paypal-security-login.xyz/verify" },
+  { label: "Secure login fake", url: "http://secure-login.verify-account.com/update/password" },
+] as const;
 
 type UrlScannerProps = {
   value: string;
@@ -11,6 +15,7 @@ type UrlScannerProps = {
   healthState: HealthState;
   apiBaseUrl: string;
   deepScan: boolean;
+  activeScanStep: number;
   onChange: (value: string) => void;
   onSubmit: () => void;
   onQuickScan: (url: string) => void;
@@ -24,6 +29,7 @@ export function UrlScanner({
   healthState,
   apiBaseUrl,
   deepScan,
+  activeScanStep,
   onChange,
   onSubmit,
   onQuickScan,
@@ -37,17 +43,30 @@ export function UrlScanner({
   return (
     <section className="scanner-shell" aria-labelledby="scanner-heading">
       <div className="hero-copy">
-        <p className="eyebrow">Real-time URL intelligence</p>
-        <h1 id="scanner-heading">Analyze suspicious URLs before you click</h1>
+        <p className="kicker">URL Intelligence Console</p>
+        <h1 id="scanner-heading">Inspect suspicious URLs with ML risk signals.</h1>
         <p>
-          TrustNet CyberCop combines lightweight ML inference with explainable URL risk signals, optional deep analysis,
-          local scan history, and AWS Free Tier conscious deployment paths.
+          TrustNet checks URL structure, domain signals, suspicious patterns, and ML risk score through a deployed AWS
+          API pipeline.
         </p>
+        <div className="hero-evidence" aria-label="TrustNet capabilities">
+          <span>47 URL features</span>
+          <span>Explainable reasons</span>
+          <span>AWS Lambda path</span>
+        </div>
       </div>
 
       <div className="scan-panel">
+        <div className="panel-heading">
+          <div>
+            <span>Analysis Target</span>
+            <strong>URL Intelligence Console</strong>
+          </div>
+          <span className="panel-index">{deepScan ? "Deep" : "Fast"}</span>
+        </div>
+
         <form className="scan-form" onSubmit={handleSubmit}>
-          <label htmlFor="url-input">URL analysis</label>
+          <label htmlFor="url-input">Suspicious URL</label>
           <div className="scan-input-row">
             <span className="input-icon">
               <Icon name="search" />
@@ -56,20 +75,20 @@ export function UrlScanner({
               id="url-input"
               type="text"
               value={value}
-              placeholder="Paste a URL to scan..."
+              placeholder="Paste a URL to inspect..."
               onChange={(event) => onChange(event.target.value)}
               autoComplete="off"
               aria-invalid={Boolean(error)}
             />
             <button className="scan-button" type="submit" disabled={loading} aria-busy={loading}>
               {loading ? <span className="button-spinner" aria-hidden="true" /> : <Icon name="zap" />}
-              {loading ? "Scanning" : "Scan URL"}
+              {loading ? "Analyzing" : "Analyze URL"}
             </button>
           </div>
         </form>
 
         <div className="scan-mode" aria-label="Scan mode">
-          <span>Scan mode</span>
+          <span>{deepScan ? "Deep mode checks redirect behavior and response hints." : "Fast mode scores URL-only signals for quick triage."}</span>
           <div className="segmented-control">
             <button type="button" className={!deepScan ? "active" : ""} onClick={() => onDeepScanChange(false)} disabled={loading}>
               Fast
@@ -82,22 +101,28 @@ export function UrlScanner({
 
         <div className="quick-scan" aria-label="Example quick scans">
           <span>Quick scan</span>
-          {QUICK_SCAN_URLS.map((url) => (
-            <button key={url} type="button" onClick={() => onQuickScan(url)} disabled={loading}>
-              {url}
+          {QUICK_SCAN_URLS.map((example) => (
+            <button key={example.url} type="button" onClick={() => onQuickScan(example.url)} disabled={loading}>
+              {example.label}
             </button>
           ))}
         </div>
 
+        <div className={`scan-trace ${loading ? "active" : ""}`} aria-label="Scan trace">
+          <div className="trace-line" />
+          <ol>
+            <li className={activeScanStep >= 0 ? "active" : ""}>Normalize URL</li>
+            <li className={activeScanStep >= 1 ? "active" : ""}>Extract Signals</li>
+            <li className={activeScanStep >= 2 ? "active" : ""}>Score Model</li>
+            <li className={activeScanStep >= 3 ? "active" : ""}>Generate Verdict</li>
+          </ol>
+        </div>
+
         {healthState === "offline" && (
-          <div className="offline-note" role="status">
-            <Icon name="alert" />
+          <div className="offline-note demo-mode-note" role="status">
+            <Icon name="shield" />
             <span>
-              Backend is offline. The dashboard remains available; start the Flask API or set
-              {" "}
-              <code>VITE_API_BASE_URL</code>
-              {" "}
-              to scan live URLs.
+              Live API unavailable, showing demo analysis.
             </span>
           </div>
         )}

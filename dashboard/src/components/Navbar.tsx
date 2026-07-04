@@ -9,8 +9,8 @@ type NavbarProps = {
 
 const healthLabels: Record<HealthState, string> = {
   checking: "Checking",
-  healthy: "Healthy",
-  offline: "Offline",
+  healthy: "Live AWS API",
+  offline: "Demo Mode",
 };
 
 export function Navbar({ healthState, healthDetail, onRefreshHealth }: NavbarProps) {
@@ -22,7 +22,7 @@ export function Navbar({ healthState, healthDetail, onRefreshHealth }: NavbarPro
         </span>
         <span>
           <strong>TrustNet CyberCop</strong>
-          <small>AI-powered phishing URL detection</small>
+          <small>AI-powered phishing URL intelligence</small>
         </span>
       </a>
 
