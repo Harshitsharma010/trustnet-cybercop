@@ -35,6 +35,9 @@ export function UrlScanner({
   onQuickScan,
   onDeepScanChange,
 }: UrlScannerProps) {
+  const isLocalApiTarget = /^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?/i.test(apiBaseUrl);
+  const apiTargetLabel = healthState === "healthy" && !isLocalApiTarget ? apiBaseUrl : "Demo Mode";
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     onSubmit();
@@ -136,7 +139,7 @@ export function UrlScanner({
 
         <div className="api-target">
           <span>API target</span>
-          <code>{apiBaseUrl}</code>
+          <code>{apiTargetLabel}</code>
         </div>
       </div>
     </section>
