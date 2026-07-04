@@ -10,39 +10,40 @@ type Signal = {
 };
 
 function buildSignals(result: ScanResult | null): Signal[] {
-  const status = result?.status ?? "Dangerous";
+  const status = result?.status;
+  const hasResult = Boolean(result);
   const isSafe = status === "Safe";
   const isSuspicious = status === "Suspicious";
 
   return [
     {
       label: "Brand keyword",
-      state: isSafe ? "neutral" : "danger",
-      detail: isSafe ? "No impersonation keyword found." : "Payment brand appears outside the official domain.",
+      state: !hasResult || isSafe ? "neutral" : "danger",
+      detail: !hasResult ? "Brand impersonation check is ready." : isSafe ? "No impersonation keyword found." : "Payment brand appears outside the official domain.",
     },
     {
       label: "Login path",
-      state: isSafe ? "neutral" : "danger",
-      detail: isSafe ? "No credential path terms detected." : "Login or verify wording appears in the path.",
+      state: !hasResult || isSafe ? "neutral" : "danger",
+      detail: !hasResult ? "Credential path check is ready." : isSafe ? "No credential path terms detected." : "Login or verify wording appears in the path.",
     },
     {
       label: "Risky TLD",
-      state: isSafe ? "neutral" : isSuspicious ? "warning" : "danger",
+      state: !hasResult || isSafe ? "neutral" : isSuspicious ? "warning" : "danger",
       detail: "Domain suffix and host pattern are compared against risky URL traits.",
     },
     {
       label: "URL length",
-      state: isSafe ? "safe" : "warning",
+      state: !hasResult ? "neutral" : isSafe ? "safe" : "warning",
       detail: "Long or segmented URLs can hide phishing intent.",
     },
     {
       label: "HTTPS",
-      state: result?.url.startsWith("https://") ? "safe" : "danger",
+      state: !hasResult ? "neutral" : result?.url.startsWith("https://") ? "safe" : "danger",
       detail: "Checks whether the URL uses HTTPS.",
     },
     {
       label: "Domain structure",
-      state: isSafe ? "safe" : "danger",
+      state: !hasResult ? "neutral" : isSafe ? "safe" : "danger",
       detail: "Hyphenation, subdomain shape, and hostname composition are scored.",
     },
     {

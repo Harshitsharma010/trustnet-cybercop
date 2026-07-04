@@ -46,6 +46,7 @@ function getVerdictSummary(status: string | undefined) {
 
 export function ResultCard({ result, loading, healthState }: ResultCardProps) {
   const [whyOpen, setWhyOpen] = useState(false);
+  const hasResult = Boolean(result);
   const tone = getRiskTone(result?.status);
   const score = result?.riskScore ?? 0;
   const statusLabel = result?.status ?? (healthState === "healthy" ? "Ready" : "Demo Mode");
@@ -112,16 +113,14 @@ export function ResultCard({ result, loading, healthState }: ResultCardProps) {
 
           <div className="result-copy">
             <p className="result-mode">{result?.scanMode ? `${result.scanMode} scan` : "ML prediction"}</p>
-            <h3>{loading ? "Analyzing URL..." : statusLabel}</h3>
-            {!loading && <strong className="verdict-summary">{getVerdictSummary(result?.status)}</strong>}
+            <h3>{loading ? "Analyzing URL..." : hasResult ? statusLabel : "Ready"}</h3>
+            {!loading && <strong className="verdict-summary">{hasResult ? getVerdictSummary(result?.status) : "Paste a URL or choose a quick example to begin."}</strong>}
             <p>
               {loading
                 ? "Checking structure, domain terms, suspicious paths, and model risk score."
-                : result
+                : hasResult
                   ? getRecommendation(result.status)
-                  : healthState === "healthy"
-                    ? "Choose a quick scan or inspect a pasted URL."
-                    : "Live API unavailable, showing demo analysis."}
+                  : "No URL has been analyzed yet. The console is ready to run a live or demo scan."}
             </p>
             <div className="verdict-actions" aria-label="Verdict cues">
               <span className={tone === "danger" ? "danger" : ""}>Credential risk</span>
@@ -135,11 +134,11 @@ export function ResultCard({ result, loading, healthState }: ResultCardProps) {
       <dl className="result-details">
         <div>
           <dt>Prediction</dt>
-          <dd>{loading ? "Analyzing" : result?.prediction ?? statusLabel}</dd>
+          <dd>{loading ? "Analyzing" : result?.prediction ?? "Awaiting URL"}</dd>
         </div>
         <div>
           <dt>Confidence</dt>
-          <dd>{loading ? "Analyzing" : result?.confidence ?? "High"}</dd>
+          <dd>{loading ? "Analyzing" : result?.confidence ?? "--"}</dd>
         </div>
         <div>
           <dt>Model score</dt>
@@ -151,15 +150,15 @@ export function ResultCard({ result, loading, healthState }: ResultCardProps) {
         </div>
         <div>
           <dt>Feature count</dt>
-          <dd>{loading ? "Analyzing" : result?.featureCount ?? 47}</dd>
+          <dd>{loading ? "Analyzing" : result?.featureCount ?? "47 ready"}</dd>
         </div>
         <div>
           <dt>Response time</dt>
-          <dd>{loading ? "Analyzing" : formatResponseTime(result?.responseTimeMs)}</dd>
+          <dd>{loading ? "Analyzing" : hasResult ? formatResponseTime(result?.responseTimeMs) : "--"}</dd>
         </div>
         <div className="url-detail">
           <dt>Scanned URL</dt>
-          <dd>{loading ? "Preparing request" : result?.url ?? "Demo URL ready"}</dd>
+          <dd>{loading ? "Preparing request" : result?.url ?? "No URL submitted yet"}</dd>
         </div>
         <div className="url-detail">
           <dt>Model version</dt>
@@ -203,7 +202,7 @@ export function ResultCard({ result, loading, healthState }: ResultCardProps) {
       <div className="reason-panel">
         <div className="reason-heading">
           <span>Signal Breakdown</span>
-          <strong>{loading ? "Scanning" : reasons.length ? `${reasons.length} signals` : "No signals"}</strong>
+          <strong>{loading ? "Scanning" : reasons.length ? `${reasons.length} signals` : "Ready"}</strong>
         </div>
         {loading ? (
           <div className="reason-empty">Collecting evidence from URL structure and model features.</div>
@@ -216,8 +215,10 @@ export function ResultCard({ result, loading, healthState }: ResultCardProps) {
               </li>
             ))}
           </ul>
-        ) : (
+        ) : hasResult ? (
           <div className="reason-empty">No strong phishing indicators were returned.</div>
+        ) : (
+          <div className="reason-empty">Run a scan to generate model-backed risk reasons.</div>
         )}
       </div>
 
@@ -235,8 +236,9 @@ export function ResultCard({ result, loading, healthState }: ResultCardProps) {
               transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
             >
               <p>
-                TrustNet matched brand impersonation signals, login/verify path patterns, risky domain structure, and
-                abnormal URL composition across 47 extracted URL features.
+                {hasResult
+                  ? "TrustNet matched brand impersonation signals, login/verify path patterns, risky domain structure, and abnormal URL composition across 47 extracted URL features."
+                  : "TrustNet explains verdicts by comparing URL structure, domain signals, path keywords, and model score across 47 extracted URL features."}
               </p>
               <dl className="signal-weight-list">
                 <div>
@@ -264,12 +266,12 @@ export function ResultCard({ result, loading, healthState }: ResultCardProps) {
       <details className="api-drawer">
         <summary>View sample API response</summary>
         <pre>{`{
-  prediction: ${result?.prediction ?? statusLabel},
-  risk_score: ${result?.riskScore ?? 87},
-  confidence: ${result?.confidence ?? "High"},
+  prediction: ${result?.prediction ?? "Ready"},
+  risk_score: ${result?.riskScore ?? 0},
+  confidence: ${result?.confidence ?? "--"},
   feature_count: ${result?.featureCount ?? 47},
   model_version: ${result?.modelVersion ?? "trustnet-url-intel-v2"},
-  reasons: ${reasons.map((reason) => reason.label).join(", ") || "Suspicious brand keyword, Login/verify path, Risky TLD pattern, Abnormal URL structure"}
+  reasons: ${reasons.map((reason) => reason.label).join(", ") || "Awaiting scan"}
 }`}</pre>
       </details>
     </motion.section>

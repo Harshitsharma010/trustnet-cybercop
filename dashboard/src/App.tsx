@@ -113,12 +113,12 @@ function isNetworkError(error: unknown) {
 function App() {
   const [healthState, setHealthState] = useState<HealthState>("checking");
   const [healthDetail, setHealthDetail] = useState("Checking Flask API health.");
-  const [urlInput, setUrlInput] = useState(DEMO_URL);
+  const [urlInput, setUrlInput] = useState("");
   const [scanError, setScanError] = useState("");
   const [loading, setLoading] = useState(false);
   const [scanStep, setScanStep] = useState(-1);
   const [deepScan, setDeepScan] = useState(false);
-  const [result, setResult] = useState<ScanResult>(() => createDemoResult(DEMO_URL, false));
+  const [result, setResult] = useState<ScanResult | null>(null);
   const [history, setHistory] = useState<ScanResult[]>(() => loadScanHistory());
   const [modelInfo, setModelInfo] = useState<BackendModelInfo | null>(null);
   const [modelMetrics, setModelMetrics] = useState<BackendModelMetrics | null>(null);
