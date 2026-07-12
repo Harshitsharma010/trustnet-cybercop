@@ -4,6 +4,7 @@ const DEFAULT_API_BASE_URL = "http://127.0.0.1:5000";
 
 const configuredBaseUrl = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim();
 
+export const HAS_CONFIGURED_API_BASE_URL = Boolean(configuredBaseUrl);
 export const API_BASE_URL = (configuredBaseUrl || DEFAULT_API_BASE_URL).replace(/\/+$/, "");
 
 async function parseJson<T>(response: Response): Promise<T | null> {

@@ -204,30 +204,17 @@ The backend was containerized with Docker and pushed to Amazon ECR as a Lambda c
 
 The React dashboard is deployed on AWS Amplify and uses `VITE_API_BASE_URL` to call the API Gateway backend. CloudWatch Logs are enabled for Lambda execution visibility, with log retention set to 1 week for cost control. The Chrome extension has also been updated to use the deployed API Gateway backend instead of localhost.
 
-## CI/CD Deployment Workflow
+## CI and Operational Verification
 
-The repository includes a GitHub Actions deploy workflow at `.github/workflows/deploy-lambda.yml`. It uses GitHub OIDC to assume an AWS IAM role instead of storing long-term AWS access keys.
+The main CI workflow runs backend tests, smoke-check unit tests, and the React dashboard production build on every pull request. Deployment to Lambda remains a manual AWS operation; the repository does not claim automated deployment without a verified OIDC role and successful workflow evidence.
 
-Manual deploy flow:
+The manually triggered workflow at `.github/workflows/smoke-test.yml` verifies the deployed API without changing AWS resources. It calls `/health` and fails unless the API returns HTTP 200, reports `status=healthy`, and confirms `model_loaded=true`.
 
-```text
-Run backend tests
-  -> Build Lambda Docker image
-  -> Push image to Amazon ECR
-  -> Update AWS Lambda function image
-  -> Wait for Lambda update
-  -> Smoke test /health
+Run the same operational check locally:
+
+```bash
+python scripts/smoke_check.py https://uen2ef1nt3.execute-api.ap-south-1.amazonaws.com
 ```
-
-Required GitHub repository variables:
-
-| Variable | Purpose |
-| --- | --- |
-| `AWS_ROLE_TO_ASSUME` | IAM role trusted by GitHub Actions OIDC |
-| `AWS_REGION` | AWS Region, defaults to `ap-south-1` if unset |
-| `ECR_REPOSITORY` | ECR repository name for the Lambda image |
-| `LAMBDA_FUNCTION_NAME` | Lambda function to update |
-| `API_BASE_URL` | Deployed API base URL for the smoke test |
 
 ## AWS Free Tier Deployment
 
@@ -768,14 +755,14 @@ This is a portfolio and security education project, not a production-grade phish
 - Hosted React + TypeScript dashboard on AWS Amplify with automated build pipeline via `amplify.yml`; restricted CloudWatch log retention to 1 week for cost control.
 - Built Chrome Extension (Manifest V3) wired to production API Gateway endpoint for real-time URL scanning with omnibox workflow and sandbox page isolation.
 - Configured API Gateway throttling (rate: 10, burst: 20) and CloudWatch alarm for Lambda error detection, demonstrating cost-aware and observable cloud architecture.
-- Added GitHub Actions Lambda deploy workflow using OIDC to build the backend image, push to ECR, update Lambda, and smoke test `/health` without long-term AWS access keys.
+- Added a tested Python API smoke check and manually triggered GitHub Actions workflow that verifies `/health` without changing AWS resources.
 
 ## Future Improvements
 
 | Area | Improvement |
 | --- | --- |
 | AWS | Add a custom domain, stricter CORS origin, and route-specific throttling policies |
-| CI/CD | Add deploy workflow screenshots after the OIDC workflow is configured and run |
+| CI/CD | Add an OIDC-backed Lambda deployment workflow after the IAM role is configured, then capture successful workflow evidence |
 | Monitoring | Add CloudWatch metrics, alarms, and structured alerting |
 | Security | Add rate limiting, stricter CORS, request size limits, and safer logging |
 | ML | Optionally retrain on the full PhiUSIIL dataset or additional live phishing feeds |

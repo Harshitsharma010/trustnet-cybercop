@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type { BackendModelInfo, BackendModelMetrics, HealthState } from "../types";
 import { Icon } from "./Icon";
 
@@ -12,15 +13,26 @@ function formatMetric(value: unknown) {
   return Number.isFinite(numeric) ? `${Math.round(numeric * 1000) / 10}%` : "--";
 }
 
+function metricPercent(value: unknown) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? Math.min(100, Math.max(0, Math.round(numeric * 100))) : 0;
+}
+
 export function ModelInsights({ healthState, modelInfo, modelMetrics }: ModelInsightsProps) {
   const metrics = modelMetrics?.selected_metrics ?? modelInfo?.metrics_summary ?? {};
   const topFeatures = modelMetrics?.top_features?.slice(0, 6) ?? [];
+  const metricRows = [
+    ["Accuracy", metrics.accuracy],
+    ["Precision", metrics.precision],
+    ["Recall", metrics.recall],
+    ["F1", metrics.f1],
+  ] as const;
 
   return (
     <section className="model-section" aria-labelledby="model-heading">
       <div className="section-heading">
         <div>
-          <p className="eyebrow">Model evidence</p>
+          <p className="kicker">Model evidence</p>
           <h2 id="model-heading">Detection Engine</h2>
         </div>
         <span className={`status-badge compact ${healthState === "healthy" ? "safe" : "neutral"}`}>
@@ -52,22 +64,13 @@ export function ModelInsights({ healthState, modelInfo, modelMetrics }: ModelIns
         </div>
 
         <div className="metric-strip" aria-label="Model evaluation metrics">
-          <div>
-            <span>Accuracy</span>
-            <strong>{formatMetric(metrics.accuracy)}</strong>
-          </div>
-          <div>
-            <span>Precision</span>
-            <strong>{formatMetric(metrics.precision)}</strong>
-          </div>
-          <div>
-            <span>Recall</span>
-            <strong>{formatMetric(metrics.recall)}</strong>
-          </div>
-          <div>
-            <span>F1</span>
-            <strong>{formatMetric(metrics.f1)}</strong>
-          </div>
+          {metricRows.map(([label, value]) => (
+            <div key={label}>
+              <span>{label}</span>
+              <strong>{formatMetric(value)}</strong>
+              <i style={{ "--metric": metricPercent(value) } as CSSProperties} />
+            </div>
+          ))}
         </div>
       </div>
 

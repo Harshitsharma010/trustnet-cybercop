@@ -17,6 +17,7 @@ export function StatCard({ icon, label, value, detail, tone }: StatCardProps) {
       <span className="stat-label">{label}</span>
       <strong>{value}</strong>
       <p>{detail}</p>
+      <span className="stat-bar" aria-hidden="true" />
     </article>
   );
 }

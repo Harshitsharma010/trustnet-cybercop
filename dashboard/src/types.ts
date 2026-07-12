@@ -1,6 +1,6 @@
 export type HealthState = "checking" | "healthy" | "offline";
 
-export type RiskStatus = "Safe" | "Suspicious" | "Phishing";
+export type RiskStatus = "Safe" | "Suspicious" | "Dangerous";
 
 export type RiskTone = "safe" | "warning" | "danger" | "neutral";
 
