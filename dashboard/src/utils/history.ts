@@ -49,7 +49,7 @@ export function computeStats(history: ScanResult[]): DashboardStats {
   return {
     urlsScanned: history.length,
     safeResults: history.filter((item) => item.status === "Safe").length,
-    threatsDetected: history.filter((item) => item.status === "Phishing").length,
+    threatsDetected: history.filter((item) => item.status === "Dangerous").length,
     avgRiskScore: riskScores.length ? Math.round(riskScores.reduce((sum, value) => sum + value, 0) / riskScores.length) : null,
     avgResponseTimeMs: responseTimes.length
       ? Math.round(responseTimes.reduce((sum, value) => sum + value, 0) / responseTimes.length)

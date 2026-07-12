@@ -28,14 +28,15 @@ export function HowItWorks() {
     <section className="how-section" aria-labelledby="how-heading">
       <div className="section-heading">
         <div>
-          <p className="eyebrow">Detection pipeline</p>
-          <h2 id="how-heading">How TrustNet CyberCop Works</h2>
+          <p className="kicker">Detection runbook</p>
+          <h2 id="how-heading">What happens during a scan</h2>
         </div>
       </div>
 
       <div className="feature-grid">
-        {steps.map((step) => (
+        {steps.map((step, index) => (
           <article className="feature-card" key={step.title}>
+            <span className="step-number">{String(index + 1).padStart(2, "0")}</span>
             <span className="feature-icon">
               <Icon name={step.icon} />
             </span>

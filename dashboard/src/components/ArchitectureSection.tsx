@@ -7,12 +7,12 @@ export function ArchitectureSection() {
     <section className="architecture-section" aria-labelledby="architecture-heading">
       <div className="section-heading">
         <div>
-          <p className="eyebrow">AWS Free Tier ready</p>
-          <h2 id="architecture-heading">Cost-aware Architecture</h2>
+          <p className="kicker">AWS Free Tier ready</p>
+          <h2 id="architecture-heading">Deployment path</h2>
         </div>
       </div>
 
-      <div className="architecture-flow" aria-label="Cloud architecture flow">
+      <div className="architecture-flow deployment-map" aria-label="Cloud architecture flow">
         {flow.map((item, index) => (
           <div className="flow-item" key={item}>
             <span>{item}</span>
