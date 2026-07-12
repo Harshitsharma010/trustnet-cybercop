@@ -1,0 +1,30 @@
+name: API smoke test
+
+on:
+  workflow_dispatch:
+    inputs:
+      api_base_url:
+        description: Deployed TrustNet API base URL
+        required: true
+        default: https://uen2ef1nt3.execute-api.ap-south-1.amazonaws.com
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-test:
+    name: Verify deployed API health
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Check deployed API
+        run: python scripts/smoke_check.py "${{ inputs.api_base_url }}"
