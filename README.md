@@ -52,7 +52,7 @@ TrustNet CyberCop is a cybersecurity project that analyzes suspicious URLs befor
 | [`docs/interview-questions.md`](docs/interview-questions.md) | Interview-ready questions and answers |
 | [`docs/github-repo-settings.md`](docs/github-repo-settings.md) | Suggested GitHub description, topics, and issue backlog |
 
-Dependabot is configured to monitor backend Python dependencies, dashboard npm dependencies, backend Docker image updates, and GitHub Actions updates.
+Dependency updates are reviewed and applied manually to keep repository attribution and production changes intentional.
 
 ## Live AWS Deployment
 
@@ -586,7 +586,7 @@ The Dockerfile also includes a health check against `/health`.
 | Variable | Used By | Required | Description |
 | --- | --- | --- | --- |
 | `ALLOWED_ORIGINS` | Flask API | Optional | CORS allowlist. Defaults to `*` for local/demo use |
-| `VITE_API_BASE_URL` | React dashboard | Optional locally, recommended for deployment | Backend API base URL. Defaults to `http://127.0.0.1:5000` |
+| `VITE_API_BASE_URL` | React dashboard | Optional | Backend API base URL. Defaults to the deployed API Gateway endpoint; set it to `http://127.0.0.1:5000` for local backend development. |
 
 Example dashboard deployment value:
 
