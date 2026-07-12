@@ -37,7 +37,7 @@ export function ScanHistory({ history, selectedId, onSelect, onClear }: ScanHist
     <section className="history-section" aria-labelledby="history-heading">
       <div className="section-heading">
         <div>
-          <p className="eyebrow">Session intelligence</p>
+          <p className="kicker">Session intelligence</p>
           <h2 id="history-heading">Recent scan history</h2>
         </div>
         <button className="secondary-button" type="button" onClick={onClear} disabled={history.length === 0}>
