@@ -6,7 +6,7 @@ import { RecentScansTimeline } from "./components/RecentScansTimeline";
 import { ResultCard } from "./components/ResultCard";
 import { UrlScanner } from "./components/UrlScanner";
 import type { BackendModelInfo, BackendModelMetrics, HealthState, ScanResult } from "./types";
-import { API_BASE_URL, HAS_CONFIGURED_API_BASE_URL, fetchHealth, fetchModelInfo, fetchModelMetrics, requestPrediction } from "./utils/api";
+import { HAS_CONFIGURED_API_BASE_URL, fetchHealth, fetchModelInfo, fetchModelMetrics, requestPrediction } from "./utils/api";
 import { computeStats, loadScanHistory, prependScan, saveScanHistory } from "./utils/history";
 import { createScanResult, validateAndNormalizeUrl } from "./utils/risk";
 
@@ -112,7 +112,7 @@ function isNetworkError(error: unknown) {
 
 function App() {
   const [healthState, setHealthState] = useState<HealthState>("checking");
-  const [healthDetail, setHealthDetail] = useState("Checking Flask API health.");
+  const [healthDetail, setHealthDetail] = useState("Checking AWS API health.");
   const [urlInput, setUrlInput] = useState("");
   const [scanError, setScanError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -141,7 +141,7 @@ function App() {
     }
 
     setHealthState("checking");
-    setHealthDetail("Checking Flask API health.");
+    setHealthDetail("Checking AWS API health.");
 
     try {
       const health = await fetchHealth();
@@ -244,7 +244,6 @@ function App() {
           error={scanError}
           loading={loading}
           healthState={healthState}
-          apiBaseUrl={API_BASE_URL}
           deepScan={deepScan}
           activeScanStep={scanStep}
           onChange={setUrlInput}

@@ -1,11 +1,9 @@
 import type { BackendHealth, BackendModelInfo, BackendModelMetrics, BackendPrediction } from "../types";
 
-const DEFAULT_API_BASE_URL = "https://uen2ef1nt3.execute-api.ap-south-1.amazonaws.com";
+const configuredBaseUrl = ((import.meta.env.VITE_API_BASE_URL as string | undefined) ?? "").trim().replace(/\/+$/, "");
 
-const configuredBaseUrl = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim();
-
-export const HAS_CONFIGURED_API_BASE_URL = Boolean(configuredBaseUrl);
-export const API_BASE_URL = (configuredBaseUrl || DEFAULT_API_BASE_URL).replace(/\/+$/, "");
+export const HAS_CONFIGURED_API_BASE_URL = configuredBaseUrl.length > 0;
+export const API_BASE_URL = configuredBaseUrl;
 
 async function parseJson<T>(response: Response): Promise<T | null> {
   const text = await response.text();

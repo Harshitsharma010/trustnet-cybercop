@@ -13,7 +13,6 @@ type UrlScannerProps = {
   error: string;
   loading: boolean;
   healthState: HealthState;
-  apiBaseUrl: string;
   deepScan: boolean;
   activeScanStep: number;
   onChange: (value: string) => void;
@@ -27,7 +26,6 @@ export function UrlScanner({
   error,
   loading,
   healthState,
-  apiBaseUrl,
   deepScan,
   activeScanStep,
   onChange,
@@ -35,8 +33,7 @@ export function UrlScanner({
   onQuickScan,
   onDeepScanChange,
 }: UrlScannerProps) {
-  const isLocalApiTarget = /^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?/i.test(apiBaseUrl);
-  const apiTargetLabel = healthState === "healthy" && !isLocalApiTarget ? apiBaseUrl : "Demo Mode";
+  const apiTargetLabel = healthState === "healthy" ? "Live AWS API" : "Demo Mode";
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
