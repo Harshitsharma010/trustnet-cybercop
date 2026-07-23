@@ -174,6 +174,19 @@ def _trusted_origin_has_only_routine_signals(signals: list[dict[str, Any]]) -> b
     return not any(str(signal.get("code")) in exceptional_codes for signal in signals)
 
 
+def _has_only_contextual_signals(signals: list[dict[str, Any]]) -> bool:
+    """Keep an isolated word such as 'login' from becoming a phishing verdict."""
+    contextual_codes = {
+        "credential_keyword",
+        "financial_keyword",
+        "urgency_keyword",
+        "long_url",
+        "many_query_params",
+    }
+    signal_codes = {str(signal.get("code")) for signal in signals}
+    return bool(signal_codes) and signal_codes <= contextual_codes
+
+
 def _merge_signals(*groups: list[dict[str, Any]]) -> list[dict[str, Any]]:
     merged: dict[str, dict[str, Any]] = {}
     severity_rank = {"info": 0, "low": 1, "medium": 2, "high": 3, "critical": 4}
@@ -309,6 +322,10 @@ def predict_url(url: str, deep_scan: bool = False) -> dict[str, Any]:
         risk_score = max(risk_score, 45.0)
     if intelligence.get("trusted_brand_domain") and _trusted_origin_has_only_routine_signals(signals):
         risk_score = min(risk_score, 24.0)
+    elif _has_only_contextual_signals(signals):
+        # Generic account language is meaningful context, but it needs a domain
+        # or structure signal before the engine calls an unknown URL dangerous.
+        risk_score = min(risk_score, STATUS_THRESHOLDS["danger_min"] - 0.1)
     if not signals and features.get("uses_https"):
         risk_score = min(risk_score, 24.0)
 

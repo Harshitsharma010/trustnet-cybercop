@@ -51,6 +51,11 @@ class FeatureExtractorTests(unittest.TestCase):
         self.assertTrue(result["trusted_brand_domain"])
         self.assertFalse(any(signal["code"] == "brand_impersonation" for signal in result["signals"]))
 
+    def test_flags_extended_brand_lookalike(self):
+        result = extract_url_intelligence("https://slak.com")
+
+        self.assertTrue(any(signal["code"] == "brand_lookalike" for signal in result["signals"]))
+
 
 if __name__ == "__main__":
     unittest.main()

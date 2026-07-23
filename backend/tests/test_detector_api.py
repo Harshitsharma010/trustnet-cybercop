@@ -54,11 +54,23 @@ class DetectorApiTests(unittest.TestCase):
         self.assertTrue(any(reason["code"] == "brand_lookalike" for reason in result["reasons"]))
 
     def test_preserves_official_login_domains_as_safe(self):
-        for url in ("https://github.com/login", "https://login.microsoftonline.com"):
+        for url in (
+            "https://github.com/login",
+            "https://login.microsoftonline.com",
+            "https://linkedin.com/login",
+            "https://notion.so/login",
+            "https://stripe.com/login",
+        ):
             with self.subTest(url=url):
                 result = predict_url(url)
                 self.assertEqual(result["status"], "Safe")
                 self.assertLess(result["risk_score"], 40)
+
+    def test_needs_structural_evidence_for_a_dangerous_verdict(self):
+        result = predict_url("https://secure-login-update.com")
+
+        self.assertEqual(result["status"], "Suspicious")
+        self.assertTrue(any(reason["code"] == "credential_keyword" for reason in result["reasons"]))
 
     def test_model_info_reports_free_tier_posture(self):
         info = model_info()
