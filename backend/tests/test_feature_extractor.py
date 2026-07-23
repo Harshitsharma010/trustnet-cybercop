@@ -40,6 +40,17 @@ class FeatureExtractorTests(unittest.TestCase):
         self.assertGreater(result["heuristic_score"], 20)
         self.assertTrue(any(signal["code"] == "unrecognized_tld" for signal in result["signals"]))
 
+    def test_flags_one_character_brand_lookalike(self):
+        result = extract_url_intelligence("https://githyb.com")
+
+        self.assertTrue(any(signal["code"] == "brand_lookalike" for signal in result["signals"]))
+
+    def test_recognizes_official_microsoft_login_domain(self):
+        result = extract_url_intelligence("https://login.microsoftonline.com")
+
+        self.assertTrue(result["trusted_brand_domain"])
+        self.assertFalse(any(signal["code"] == "brand_impersonation" for signal in result["signals"]))
+
 
 if __name__ == "__main__":
     unittest.main()

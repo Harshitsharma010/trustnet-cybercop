@@ -40,6 +40,26 @@ class DetectorApiTests(unittest.TestCase):
         self.assertLess(result["risk_score"], 70)
         self.assertTrue(any(reason["code"] == "unrecognized_tld" for reason in result["reasons"]))
 
+    def test_predicts_brand_lookalike_as_dangerous(self):
+        result = predict_url("https://githyb.com")
+
+        self.assertEqual(result["status"], "Dangerous")
+        self.assertGreaterEqual(result["risk_score"], 70)
+        self.assertTrue(any(reason["code"] == "brand_lookalike" for reason in result["reasons"]))
+
+    def test_predicts_lookalike_login_as_dangerous(self):
+        result = predict_url("https://githyb.com/login")
+
+        self.assertEqual(result["status"], "Dangerous")
+        self.assertTrue(any(reason["code"] == "brand_lookalike" for reason in result["reasons"]))
+
+    def test_preserves_official_login_domains_as_safe(self):
+        for url in ("https://github.com/login", "https://login.microsoftonline.com"):
+            with self.subTest(url=url):
+                result = predict_url(url)
+                self.assertEqual(result["status"], "Safe")
+                self.assertLess(result["risk_score"], 40)
+
     def test_model_info_reports_free_tier_posture(self):
         info = model_info()
 

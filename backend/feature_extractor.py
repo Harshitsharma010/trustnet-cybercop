@@ -167,7 +167,14 @@ BRAND_DOMAINS = {
     "hdfc": {"hdfcbank.com"},
     "icici": {"icicibank.com"},
     "instagram": {"instagram.com"},
-    "microsoft": {"microsoft.com", "office.com", "live.com", "outlook.com"},
+    "microsoft": {
+        "live.com",
+        "microsoft.com",
+        "microsoft365.com",
+        "microsoftonline.com",
+        "office.com",
+        "outlook.com",
+    },
     "netflix": {"netflix.com"},
     "openai": {"openai.com"},
     "paypal": {"paypal.com"},
@@ -275,6 +282,60 @@ def _has_unrecognized_tld(hostname: str) -> bool:
     return len(tld) > 2 and tld not in COMMON_TLDS and tld not in RISKY_TLDS
 
 
+def _is_trusted_brand_domain(hostname: str) -> bool:
+    registered = _registered_domain(hostname)
+    return any(registered in domains for domains in BRAND_DOMAINS.values())
+
+
+def _edit_distance(left: str, right: str) -> int:
+    """Return edit distance with adjacent character swaps counted as one change."""
+    if left == right:
+        return 0
+    if not left:
+        return len(right)
+    if not right:
+        return len(left)
+
+    previous_previous: list[int] | None = None
+    previous = list(range(len(right) + 1))
+    for left_index, left_char in enumerate(left, start=1):
+        current = [left_index]
+        for right_index, right_char in enumerate(right, start=1):
+            cost = 0 if left_char == right_char else 1
+            substitution = previous[right_index - 1] + cost
+            insertion = current[right_index - 1] + 1
+            deletion = previous[right_index] + 1
+            value = min(substitution, insertion, deletion)
+            if (
+                previous_previous is not None
+                and left_index > 1
+                and right_index > 1
+                and left_char == right[right_index - 2]
+                and left[left_index - 2] == right_char
+            ):
+                value = min(value, previous_previous[right_index - 2] + 1)
+            current.append(value)
+        previous_previous, previous = previous, current
+    return previous[-1]
+
+
+def _brand_lookalikes(hostname: str) -> list[str]:
+    if _is_trusted_brand_domain(hostname):
+        return []
+
+    registered = _registered_domain(hostname)
+    tld = _tld(registered)
+    domain_part = registered[: -(len(tld) + 1)] if tld else registered
+    labels = [label for label in re.split(r"[^a-z0-9]+", domain_part) if len(label) >= 4]
+    matches = {
+        brand
+        for label in labels
+        for brand in BRAND_DOMAINS
+        if label != brand and _edit_distance(label, brand) <= 1
+    }
+    return sorted(matches)
+
+
 def _is_ip_hostname(hostname: str) -> bool:
     try:
         ipaddress.ip_address(hostname.strip("[]"))
@@ -361,7 +422,13 @@ def _add_signal(signals: list[RiskSignal], code: str, label: str, severity: str,
     signals.append(RiskSignal(code=code, label=label, severity=severity, detail=detail, evidence=evidence))
 
 
-def _build_signals(features: dict[str, int | float], parsed, hostname: str, matched_brands: list[str]) -> list[RiskSignal]:
+def _build_signals(
+    features: dict[str, int | float],
+    parsed,
+    hostname: str,
+    matched_brands: list[str],
+    lookalike_brands: list[str],
+) -> list[RiskSignal]:
     signals: list[RiskSignal] = []
 
     if features["has_ip"]:
@@ -401,6 +468,15 @@ def _build_signals(features: dict[str, int | float], parsed, hostname: str, matc
         _add_signal(signals, "brand_impersonation", "Possible brand impersonation", "critical", "A known brand appears on an untrusted domain.", ", ".join(matched_brands))
     elif features["brand_in_path"]:
         _add_signal(signals, "brand_keyword_path", "Brand keyword in path", "medium", "A known brand appears away from its trusted domain.", ", ".join(matched_brands))
+    if lookalike_brands:
+        _add_signal(
+            signals,
+            "brand_lookalike",
+            "Possible typo-squatted brand",
+            "high",
+            "The registered domain differs from a known brand by one character or adjacent character swap.",
+            ", ".join(lookalike_brands),
+        )
     if features["credential_keyword_count"]:
         _add_signal(signals, "credential_keyword", "Credential keyword", "high", "The URL contains sign-in or verification language.", features["credential_keyword_count"])
     if features["financial_keyword_count"]:
@@ -483,6 +559,7 @@ def extract_url_intelligence(url: str) -> dict[str, Any]:
     query_params = parse_qsl(query, keep_blank_values=True)
     subdomain_depth = _subdomain_depth(hostname)
     brand_in_host, brand_in_path, matched_brands = _brand_impersonation(hostname, decoded_url)
+    lookalike_brands = _brand_lookalikes(hostname)
 
     features: dict[str, int | float] = {
         "url_length": len(normalized_url),
@@ -535,13 +612,14 @@ def extract_url_intelligence(url: str) -> dict[str, Any]:
     }
 
     ordered_features = {column: features.get(column, 0) for column in FEATURE_COLUMNS}
-    signals = _build_signals(ordered_features, parsed, hostname, matched_brands)
+    signals = _build_signals(ordered_features, parsed, hostname, matched_brands, lookalike_brands)
     score = heuristic_score(ordered_features, signals)
 
     return {
         "url": normalized_url,
         "hostname": hostname,
         "registered_domain": registered,
+        "trusted_brand_domain": _is_trusted_brand_domain(hostname),
         "features": ordered_features,
         "signals": [signal.to_dict() for signal in signals],
         "heuristic_score": score,
