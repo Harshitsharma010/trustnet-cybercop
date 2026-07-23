@@ -141,6 +141,11 @@ def _critical_signal_present(signals: list[dict[str, Any]]) -> bool:
     return any(signal.get("severity") == "critical" for signal in signals)
 
 
+def _domain_integrity_signal_present(signals: list[dict[str, Any]]) -> bool:
+    domain_integrity_codes = {"risky_tld", "unrecognized_tld"}
+    return any(str(signal.get("code")) in domain_integrity_codes for signal in signals)
+
+
 def _merge_signals(*groups: list[dict[str, Any]]) -> list[dict[str, Any]]:
     merged: dict[str, dict[str, Any]] = {}
     severity_rank = {"info": 0, "low": 1, "medium": 2, "high": 3, "critical": 4}
@@ -270,6 +275,8 @@ def predict_url(url: str, deep_scan: bool = False) -> dict[str, Any]:
     risk_score = round((model_score * 0.68) + (adjusted_heuristic * 0.32), 1)
     if _critical_signal_present(signals):
         risk_score = max(risk_score, 78.0)
+    elif _domain_integrity_signal_present(signals):
+        risk_score = max(risk_score, 45.0)
     if not signals and features.get("uses_https"):
         risk_score = min(risk_score, 24.0)
 

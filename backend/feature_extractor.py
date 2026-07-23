@@ -55,6 +55,42 @@ RISKY_TLDS = {
     "zip",
 }
 
+COMMON_TLDS = {
+    "agency",
+    "app",
+    "ai",
+    "biz",
+    "cloud",
+    "co",
+    "com",
+    "dev",
+    "digital",
+    "edu",
+    "gov",
+    "in",
+    "io",
+    "life",
+    "me",
+    "media",
+    "net",
+    "news",
+    "online",
+    "org",
+    "page",
+    "pro",
+    "sbi",
+    "site",
+    "solutions",
+    "space",
+    "store",
+    "systems",
+    "tech",
+    "today",
+    "us",
+    "website",
+    "world",
+}
+
 SECOND_LEVEL_SUFFIXES = {
     "ac.in",
     "co.in",
@@ -234,6 +270,11 @@ def _tld(hostname: str) -> str:
     return parts[-1] if parts else ""
 
 
+def _has_unrecognized_tld(hostname: str) -> bool:
+    tld = _tld(hostname)
+    return len(tld) > 2 and tld not in COMMON_TLDS and tld not in RISKY_TLDS
+
+
 def _is_ip_hostname(hostname: str) -> bool:
     try:
         ipaddress.ip_address(hostname.strip("[]"))
@@ -347,6 +388,15 @@ def _build_signals(features: dict[str, int | float], parsed, hostname: str, matc
         _add_signal(signals, "custom_port", "Custom port", "low", "The URL uses an explicit non-standard port.", port)
     if features["suspicious_tld"]:
         _add_signal(signals, "risky_tld", "Risky top-level domain", "medium", "This TLD is commonly seen in low-cost phishing campaigns.", _tld(hostname))
+    elif _has_unrecognized_tld(hostname):
+        _add_signal(
+            signals,
+            "unrecognized_tld",
+            "Unrecognized top-level domain",
+            "medium",
+            "The domain suffix is uncommon or typo-like, which can indicate disposable phishing infrastructure.",
+            _tld(hostname),
+        )
     if features["brand_in_host"]:
         _add_signal(signals, "brand_impersonation", "Possible brand impersonation", "critical", "A known brand appears on an untrusted domain.", ", ".join(matched_brands))
     elif features["brand_in_path"]:

@@ -34,6 +34,12 @@ class FeatureExtractorTests(unittest.TestCase):
         self.assertEqual(result["features"]["uses_http"], 1)
         self.assertTrue(any(signal["code"] == "ip_host" for signal in result["signals"]))
 
+    def test_flags_unrecognized_tld(self):
+        result = extract_url_intelligence("https://w22.igore.ckm")
+
+        self.assertGreater(result["heuristic_score"], 20)
+        self.assertTrue(any(signal["code"] == "unrecognized_tld" for signal in result["signals"]))
+
 
 if __name__ == "__main__":
     unittest.main()

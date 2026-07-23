@@ -32,6 +32,14 @@ class DetectorApiTests(unittest.TestCase):
         self.assertGreaterEqual(result["risk_score"], 70)
         self.assertTrue(result["reasons"])
 
+    def test_predict_unrecognized_tld_as_suspicious(self):
+        result = predict_url("https://w22.igore.ckm")
+
+        self.assertEqual(result["status"], "Suspicious")
+        self.assertGreaterEqual(result["risk_score"], 40)
+        self.assertLess(result["risk_score"], 70)
+        self.assertTrue(any(reason["code"] == "unrecognized_tld" for reason in result["reasons"]))
+
     def test_model_info_reports_free_tier_posture(self):
         info = model_info()
 
