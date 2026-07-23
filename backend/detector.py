@@ -142,7 +142,12 @@ def _critical_signal_present(signals: list[dict[str, Any]]) -> bool:
 
 
 def _domain_integrity_signal_present(signals: list[dict[str, Any]]) -> bool:
-    domain_integrity_codes = {"risky_tld", "unrecognized_tld"}
+    domain_integrity_codes = {
+        "brand_near_match",
+        "random_domain_label",
+        "risky_tld",
+        "unrecognized_tld",
+    }
     return any(str(signal.get("code")) in domain_integrity_codes for signal in signals)
 
 
@@ -152,7 +157,7 @@ def _brand_lookalike_signal_present(signals: list[dict[str, Any]]) -> bool:
 
 def _lookalike_credential_pattern_present(signals: list[dict[str, Any]]) -> bool:
     signal_codes = {str(signal.get("code")) for signal in signals}
-    return "brand_lookalike" in signal_codes and bool(
+    return bool({"brand_lookalike", "brand_near_match"} & signal_codes) and bool(
         signal_codes & {"credential_keyword", "risky_tld", "unrecognized_tld"}
     )
 
@@ -178,6 +183,7 @@ def _has_only_contextual_signals(signals: list[dict[str, Any]]) -> bool:
     """Keep an isolated word such as 'login' from becoming a phishing verdict."""
     contextual_codes = {
         "credential_keyword",
+        "brand_near_match",
         "financial_keyword",
         "urgency_keyword",
         "long_url",
@@ -185,6 +191,19 @@ def _has_only_contextual_signals(signals: list[dict[str, Any]]) -> bool:
     }
     signal_codes = {str(signal.get("code")) for signal in signals}
     return bool(signal_codes) and signal_codes <= contextual_codes
+
+
+def _has_only_preliminary_unknown_signals(signals: list[dict[str, Any]]) -> bool:
+    preliminary_codes = {
+        "credential_keyword",
+        "financial_keyword",
+        "urgency_keyword",
+        "long_url",
+        "many_query_params",
+        "random_domain_label",
+    }
+    signal_codes = {str(signal.get("code")) for signal in signals}
+    return bool(signal_codes) and signal_codes <= preliminary_codes
 
 
 def _merge_signals(*groups: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -322,9 +341,11 @@ def predict_url(url: str, deep_scan: bool = False) -> dict[str, Any]:
         risk_score = max(risk_score, 45.0)
     if intelligence.get("trusted_brand_domain") and _trusted_origin_has_only_routine_signals(signals):
         risk_score = min(risk_score, 24.0)
-    elif _has_only_contextual_signals(signals):
-        # Generic account language is meaningful context, but it needs a domain
-        # or structure signal before the engine calls an unknown URL dangerous.
+    elif not _lookalike_credential_pattern_present(signals) and (
+        _has_only_preliminary_unknown_signals(signals) or _has_only_contextual_signals(signals)
+    ):
+        # Preliminary lexical or domain-shape clues need corroboration before
+        # the engine calls an unknown URL dangerous.
         risk_score = min(risk_score, STATUS_THRESHOLDS["danger_min"] - 0.1)
     if not signals and features.get("uses_https"):
         risk_score = min(risk_score, 24.0)

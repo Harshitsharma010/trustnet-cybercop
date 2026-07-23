@@ -72,6 +72,24 @@ class DetectorApiTests(unittest.TestCase):
         self.assertEqual(result["status"], "Suspicious")
         self.assertTrue(any(reason["code"] == "credential_keyword" for reason in result["reasons"]))
 
+    def test_predicts_two_character_lookalike_login_as_dangerous(self):
+        result = predict_url("https://githxbz.com/login")
+
+        self.assertEqual(result["status"], "Dangerous")
+        self.assertTrue(any(reason["code"] == "brand_near_match" for reason in result["reasons"]))
+
+    def test_treats_two_character_lookalike_without_other_signals_as_suspicious(self):
+        result = predict_url("https://githxbz.com")
+
+        self.assertEqual(result["status"], "Suspicious")
+        self.assertTrue(any(reason["code"] == "brand_near_match" for reason in result["reasons"]))
+
+    def test_predicts_random_looking_unknown_domain_as_suspicious(self):
+        result = predict_url("https://q8x4r2z7n.com")
+
+        self.assertEqual(result["status"], "Suspicious")
+        self.assertTrue(any(reason["code"] == "random_domain_label" for reason in result["reasons"]))
+
     def test_model_info_reports_free_tier_posture(self):
         info = model_info()
 

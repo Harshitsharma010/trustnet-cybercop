@@ -236,6 +236,18 @@ SEVERITY_POINTS = {
     "critical": 38,
 }
 
+BRAND_CONFUSABLES = str.maketrans(
+    {
+        "0": "o",
+        "1": "i",
+        "3": "e",
+        "4": "a",
+        "5": "s",
+        "7": "t",
+        "8": "b",
+    }
+)
+
 
 @dataclass(frozen=True)
 class RiskSignal:
@@ -290,6 +302,31 @@ def _has_unrecognized_tld(hostname: str) -> bool:
     return len(tld) > 2 and tld not in COMMON_TLDS and tld not in RISKY_TLDS
 
 
+def _registered_label(hostname: str) -> str:
+    registered = _registered_domain(hostname)
+    parts = [part for part in registered.split(".") if part]
+    if len(parts) >= 3 and ".".join(parts[-2:]) in SECOND_LEVEL_SUFFIXES:
+        return parts[-3]
+    return parts[-2] if len(parts) >= 2 else registered
+
+
+def _normalise_brand_text(value: str) -> str:
+    compact = re.sub(r"[^a-z0-9]", "", value.lower())
+    return compact.translate(BRAND_CONFUSABLES).replace("rn", "m")
+
+
+def _has_random_domain_label(hostname: str) -> bool:
+    label = _registered_label(hostname)
+    compact = re.sub(r"[^a-z0-9]", "", label)
+    digit_count = sum(char.isdigit() for char in compact)
+    entropy = _shannon_entropy(compact)
+
+    if len(compact) < 9:
+        return False
+
+    return (digit_count >= 3 and entropy >= 2.8) or (len(compact) >= 14 and entropy >= 3.55)
+
+
 def _is_trusted_brand_domain(hostname: str) -> bool:
     registered = _registered_domain(hostname)
     return any(registered in domains for domains in BRAND_DOMAINS.values())
@@ -327,21 +364,28 @@ def _edit_distance(left: str, right: str) -> int:
     return previous[-1]
 
 
-def _brand_lookalikes(hostname: str) -> list[str]:
+def _brand_lookalikes(hostname: str) -> list[dict[str, int | str]]:
     if _is_trusted_brand_domain(hostname):
         return []
 
-    registered = _registered_domain(hostname)
-    tld = _tld(registered)
-    domain_part = registered[: -(len(tld) + 1)] if tld else registered
-    labels = [label for label in re.split(r"[^a-z0-9]+", domain_part) if len(label) >= 4]
-    matches = {
-        brand
-        for label in labels
-        for brand in BRAND_DOMAINS
-        if label != brand and _edit_distance(label, brand) <= 1
-    }
-    return sorted(matches)
+    labels = [label for label in re.split(r"[^a-z0-9]+", _registered_label(hostname)) if len(label) >= 4]
+    matches: dict[str, int] = {}
+
+    for raw_label in labels:
+        for candidate in {raw_label, _normalise_brand_text(raw_label)}:
+            for brand in BRAND_DOMAINS:
+                if raw_label == brand:
+                    continue
+
+                max_distance = 2 if len(brand) >= 6 else 1
+                distance = _edit_distance(candidate, brand)
+                if distance <= max_distance:
+                    matches[brand] = min(matches.get(brand, distance), distance)
+
+    return [
+        {"brand": brand, "distance": distance}
+        for brand, distance in sorted(matches.items())
+    ]
 
 
 def _is_ip_hostname(hostname: str) -> bool:
@@ -387,8 +431,8 @@ def _count_keywords(value: str, keywords: set[str]) -> int:
 
 def _brand_impersonation(hostname: str, url_text: str) -> tuple[int, int, list[str]]:
     registered = _registered_domain(hostname)
-    compact_host = hostname.replace("-", "").replace(".", "")
-    compact_url = url_text.lower().replace("-", "").replace("_", "")
+    compact_host = _normalise_brand_text(hostname)
+    compact_url = _normalise_brand_text(url_text)
     host_hit = 0
     path_hit = 0
     matched: list[str] = []
@@ -435,7 +479,7 @@ def _build_signals(
     parsed,
     hostname: str,
     matched_brands: list[str],
-    lookalike_brands: list[str],
+    lookalike_brands: list[dict[str, int | str]],
 ) -> list[RiskSignal]:
     signals: list[RiskSignal] = []
 
@@ -476,14 +520,25 @@ def _build_signals(
         _add_signal(signals, "brand_impersonation", "Possible brand impersonation", "critical", "A known brand appears on an untrusted domain.", ", ".join(matched_brands))
     elif features["brand_in_path"]:
         _add_signal(signals, "brand_keyword_path", "Brand keyword in path", "medium", "A known brand appears away from its trusted domain.", ", ".join(matched_brands))
-    if lookalike_brands:
+    close_lookalikes = [match for match in lookalike_brands if int(match["distance"]) <= 1]
+    near_lookalikes = [match for match in lookalike_brands if int(match["distance"]) == 2]
+    if close_lookalikes:
         _add_signal(
             signals,
             "brand_lookalike",
             "Possible typo-squatted brand",
             "high",
-            "The registered domain differs from a known brand by one character or adjacent character swap.",
-            ", ".join(lookalike_brands),
+            "The registered domain matches a known brand after one edit, an adjacent swap, or a common character disguise.",
+            ", ".join(str(match["brand"]) for match in close_lookalikes),
+        )
+    if near_lookalikes:
+        _add_signal(
+            signals,
+            "brand_near_match",
+            "Possible multi-character brand lookalike",
+            "medium",
+            "The registered domain is two edits away from a known brand and needs another signal before a dangerous verdict.",
+            ", ".join(str(match["brand"]) for match in near_lookalikes),
         )
     if features["credential_keyword_count"]:
         _add_signal(signals, "credential_keyword", "Credential keyword", "high", "The URL contains sign-in or verification language.", features["credential_keyword_count"])
@@ -501,6 +556,15 @@ def _build_signals(
         _add_signal(signals, "many_hyphens", "Many hyphens", "low", "Hyphen-heavy domains are common in impersonation attempts.", features["num_hyphens"])
     if features["many_digits"]:
         _add_signal(signals, "many_digits", "Digit-heavy URL", "low", "The URL contains an unusual number of digits.", features["num_digits"])
+    if _has_random_domain_label(hostname):
+        _add_signal(
+            signals,
+            "random_domain_label",
+            "Random-looking domain label",
+            "medium",
+            "The registered domain mixes uncommon characters, digits, or entropy in a pattern often used for disposable infrastructure.",
+            _registered_label(hostname),
+        )
     if features["many_query_params"]:
         _add_signal(signals, "many_query_params", "Many query parameters", "low", "The URL contains many tracking or state parameters.", features["num_query_params"])
     if features["contains_encoded_chars"]:

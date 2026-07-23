@@ -56,6 +56,16 @@ class FeatureExtractorTests(unittest.TestCase):
 
         self.assertTrue(any(signal["code"] == "brand_lookalike" for signal in result["signals"]))
 
+    def test_flags_two_character_brand_near_match(self):
+        result = extract_url_intelligence("https://githxbz.com")
+
+        self.assertTrue(any(signal["code"] == "brand_near_match" for signal in result["signals"]))
+
+    def test_flags_random_looking_domain_label(self):
+        result = extract_url_intelligence("https://q8x4r2z7n.com")
+
+        self.assertTrue(any(signal["code"] == "random_domain_label" for signal in result["signals"]))
+
 
 if __name__ == "__main__":
     unittest.main()
